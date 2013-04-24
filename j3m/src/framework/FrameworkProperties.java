@@ -23,7 +23,10 @@ public class FrameworkProperties {
 	}
 	public String getTestVideo() {
 		return properties.getProperty("test_video");
-	}	
+	}
+	public String getTestJ3M() {
+		return properties.getProperty("test_j3m");
+	}
 	public String getJ3MGetMetadata() {
 		return properties.getProperty("j3m_get_metadata");
 	}

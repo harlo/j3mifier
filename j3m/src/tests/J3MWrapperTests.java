@@ -7,8 +7,9 @@ import java.io.File;
 import org.junit.Assert;
 import org.junit.Test;
 
+import util.Util;
+
 import framework.FrameworkProperties;
-import framework.Util;
 
 public class J3MWrapperTests {
 

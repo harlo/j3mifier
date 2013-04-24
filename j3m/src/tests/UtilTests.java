@@ -4,8 +4,9 @@ import java.io.File;
 import junit.framework.Assert;
 import org.junit.Test;
 
+import util.Util;
+
 import framework.FrameworkProperties;
-import framework.Util;
 
 public class UtilTests {
 	@Test
@@ -32,13 +33,13 @@ public class UtilTests {
 	public void resizeImageTest() throws Exception{
 		FrameworkProperties config = FrameworkProperties.getInstance();
 		
-		String outFile = config.getOutputFolder()+ "test." + Util.getFileExtenssion(config.getTestImage());
+		File outFile = new File(config.getOutputFolder()+ "test." + Util.getFileExtenssion(config.getTestImage()));
 		long timestamp = System.currentTimeMillis();
-		File output = Util.resizeImage(config.getTestImage(), outFile, 100, 100);
-		if (!output.exists()){
-		    Assert.fail("Resized image file " + output.getPath() + " does not exist");
+		Util.resizeImage(new File(config.getTestImage()), outFile, 100, 100);
+		if (!outFile.exists()){
+		    Assert.fail("Resized image file " + outFile.getPath() + " does not exist");
 		}
-		Assert.assertTrue("Resized image file was not updated", timestamp < output.lastModified());
+		Assert.assertTrue("Resized image file was not updated", timestamp < outFile.lastModified());
 
 	}
 

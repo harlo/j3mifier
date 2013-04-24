@@ -2,6 +2,8 @@ package framework;
 
 import java.io.File;
 
+import util.Util;
+
 
 public class MediaProcessor {
 	
@@ -85,7 +87,7 @@ public class MediaProcessor {
 			image.createThumbnail();
 			
 			image.toLowResolution(false);
-			image.totMediumResolution(false);
+			image.toMediumResolution(false);
 			image.toHighResolution(false);
 
 		} catch (Exception e) {

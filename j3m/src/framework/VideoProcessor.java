@@ -2,6 +2,8 @@ package framework;
 
 import java.io.File;
 
+import util.Util;
+
 import ffmpeg.FfmpegException;
 import ffmpeg.FfmpegWrapper;
 
@@ -38,11 +40,11 @@ public class VideoProcessor {
 		} catch (Exception e) {
 			throw new FfmpegException("Still file " + stillFile + " could not be created", e);
 		}
-		String thumbFile = outputFolder.getAbsolutePath() +
+		File thumbFile = new File(outputFolder.getAbsolutePath(),
 		"thumb_" + Util.getBaseFileName(sourceFile.getName()) + "." + 
-		FrameworkProperties.getInstance().getThumbFileExt();
+		FrameworkProperties.getInstance().getThumbFileExt());
 		try {
-			Util.resizeImage(sourceFile.getAbsolutePath(), thumbFile, 
+			Util.resizeImage(sourceFile, thumbFile, 
 					FrameworkProperties.getInstance().getThumbWidth(), 
 					FrameworkProperties.getInstance().getThumbHeight());
 		} catch (Exception e) {

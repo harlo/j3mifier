@@ -6,9 +6,10 @@ import java.io.File;
 import org.junit.Assert;
 import org.junit.Test;
 
+import util.Util;
+
 import ffmpeg.FfmpegWrapper;
 import framework.FrameworkProperties;
-import framework.Util;
 
 public class FfmpegWrapperTests {
 

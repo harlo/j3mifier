@@ -4,17 +4,17 @@ import j3m.J3MException;
 import j3m.J3MWrapper;
 
 import java.awt.image.BufferedImage;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
+import util.JSONTreeSearcher;
+import util.Util;
+
 import com.google.gson.stream.JsonWriter;
 
 
@@ -68,103 +68,116 @@ public class ImageProcessor {
 		
 	}
 	
-	//TODO finish this
+	/**
+	 * Uses google's gson lib to parse keywords out of metadata into a separate json file, probably badly
+	 * this all seems very iffy and un-java-ry
+	 * @param sourceFile
+	 * @param outputFile
+	 * @throws IOException
+	 */
 	public void parseKeyWords(File sourceFile, String outputFile) throws IOException{
-		File output = new File(outputFile);
-		FileWriter writer = new FileWriter(output);
-		BufferedWriter out = new BufferedWriter(writer);
-		JsonWriter jsonWriter = new JsonWriter(out);
-		JsonParser parser = new JsonParser();
-		JsonElement meta = parser.parse(new FileReader(sourceFile));
-
-		try {
-			List<String> exclusions = FrameworkProperties.getInstance().getImageKeywordExclussions();
-			for (String container : FrameworkProperties.getInstance().getImageKeywordContainers()) {
-				String text = container.toString(); //TODO find a json parser
-				String[] keywords = text.split(" ");
-				for (int i = 0; i < keywords.length; i++) {
-					if (!exclusions.contains(keywords[i])) {
-						out.write("Hello Java");
+		List<String> exclusions = FrameworkProperties.getInstance().getImageKeywordExclussions();
+		List<String> keywordList = new ArrayList<String>();
+		
+		for (String container : FrameworkProperties.getInstance().getImageKeywordContainers()) {
+			String[] path = container.split("\\.");
+			JSONTreeSearcher jsonSearcher = new JSONTreeSearcher(sourceFile, path);
+			List<String> values = jsonSearcher.performSearch();
+			
+			for (String value : values){
+				if (value != null) {
+					String[] keywords = value.toString().split(" ");
+					for (int i = 0; i < keywords.length; i++) {
+						if (!exclusions.contains(keywords[i])) {
+							keywordList.add(keywords[i]);
+						}
 					}
 				}
 			}
-		} finally {
-			out.close();
 		}
+		JsonWriter jsonWriter;
+		jsonWriter = new JsonWriter(new FileWriter(outputFile));
+		jsonWriter.beginObject();
+		jsonWriter.name("keywords");
+		jsonWriter.beginArray();
+		for (String keyword : keywordList) {
+			jsonWriter.value(keyword);
+		}
+		jsonWriter.endArray();
+		jsonWriter.endObject(); // }
+		jsonWriter.close();
 	}
 	
 	public void createThumbnail() throws Exception{
-		String thumbFile = outputFolder.getAbsolutePath() +
-		"thumb_" + Util.getBaseFileName(sourceFile.getName()) + "." + 
-		FrameworkProperties.getInstance().getThumbFileExt();
+		File outFile = new File(outputFolder, "thumb_" + Util.getBaseFileName(sourceFile.getName()) + "." + 	
+		FrameworkProperties.getInstance().getThumbFileExt());
 		try {
-			Util.resizeImage(sourceFile.getAbsolutePath(), thumbFile, 
+			Util.resizeImage(sourceFile, outFile, 
 					FrameworkProperties.getInstance().getThumbWidth(), 
 					FrameworkProperties.getInstance().getThumbHeight());
 		} catch (Exception e) {
-			throw new Exception("Thumbnail file " + thumbFile + " could not be created", e);
+			throw new Exception("Thumbnail file " + outFile.getName() + " could not be created", e);
 		}
 		
 	}
 	public void toLowResolution(boolean updateSource) throws Exception{
-		String outFile = outputFolder.getAbsolutePath() +
+		File outFile = new File(outputFolder,
 		"low_" + Util.getBaseFileName(sourceFile.getName()) + "." + 
-		Util.getFileExtenssion(sourceFile.getName());
+		Util.getFileExtenssion(sourceFile.getName()));
 		try {
-			File out = Util.resizeImage(sourceFile.getAbsolutePath(), outFile, 
+			Util.resizeImage(sourceFile, outFile, 
 					FrameworkProperties.getInstance().getImageSmallWidth(), 
 					FrameworkProperties.getInstance().getImageSmallHeight());
 			if (updateSource) {
-				sourceFile = out;
+				sourceFile = outFile;
 			}
 		} catch (Exception e) {
-			throw new Exception("Low res image file " + outFile + " could not be created", e);
+			throw new Exception("Low res image file " + outFile.getName() + " could not be created", e);
 		}
 	}
-	public void totMediumResolution(boolean updateSource)throws Exception{
-		String outFile = outputFolder.getAbsolutePath() +
+	public void toMediumResolution(boolean updateSource)throws Exception{
+		File outFile = new File(outputFolder,
 		"med_" + Util.getBaseFileName(sourceFile.getName()) + "." + 
-		Util.getFileExtenssion(sourceFile.getName());
+		Util.getFileExtenssion(sourceFile.getName()));
 		try {
-			File out = Util.resizeImage(sourceFile.getAbsolutePath(), outFile, 
+			Util.resizeImage(sourceFile, outFile, 
 					FrameworkProperties.getInstance().getImageMedWidth(), 
 					FrameworkProperties.getInstance().getImageMedHeight());
 			if (updateSource) {
-				sourceFile = out;
+				sourceFile = outFile;
 			}
 		} catch (Exception e) {
-			throw new Exception("Medium res image file  " + outFile + " could not be created", e);
+			throw new Exception("Medium res image file  " + outFile.getName() + " could not be created", e);
 		}
 		
 	}
 	public void toHighResolution(boolean updateSource)throws Exception{
-		String outFile = outputFolder.getAbsolutePath() +
+		File outFile = new File(outputFolder,
 		"high_" + Util.getBaseFileName(sourceFile.getName()) + "." + 
-		Util.getFileExtenssion(sourceFile.getName());
+		Util.getFileExtenssion(sourceFile.getName()));
 		try {
-			File out = Util.resizeImage(sourceFile.getAbsolutePath(), outFile, 
+			Util.resizeImage(sourceFile, outFile, 
 					FrameworkProperties.getInstance().getImageLargeWidth(), 
 					FrameworkProperties.getInstance().getImageLargeHeight());
 			if (updateSource) {
-				sourceFile = out;
+				sourceFile = outFile;
 			}
 		} catch (Exception e) {
-			throw new Exception("High res image file " + outFile + " could not be created", e);
+			throw new Exception("High res image file " + outFile.getName() + " could not be created", e);
 		}
 		
 	}
 	public void toOriginalResolution(boolean updateSource)throws Exception{
-		String outFile = outputFolder.getAbsolutePath() + sourceFile.getName();
+		File outFile =  new File(outputFolder, sourceFile.getName());
 		try {
 			BufferedImage image = ImageIO.read(sourceFile);
-			String fileType = Util.getFileExtenssion(outFile);
-			File out = new File(outFile);
-			ImageIO.write(image, fileType, out);
+			String fileType = Util.getFileExtenssion(outFile.getName());
+			ImageIO.write(image, fileType, outFile);
 			if (updateSource) {
-				sourceFile = out;
+				sourceFile = outFile;
 			}
 		} catch (Exception e) {
-			throw new Exception("Image file " + outFile + " could not be created", e);
+			throw new Exception("Image file " + outFile.getName() + " could not be created", e);
 		}
 		
 	}

@@ -4,8 +4,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
 
+import util.Util;
+
 import framework.FrameworkProperties;
-import framework.Util;
 
 
 public class FfmpegWrapper {

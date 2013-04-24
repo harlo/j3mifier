@@ -100,7 +100,7 @@ public class PropertiesTest {
 				if (!file.exists()){
 				    Assert.fail("test image file does not exist");
 				}
-				if (file.isDirectory()){
+				if (!file.isFile()){
 				    Assert.fail("test image file doe not exist");
 				}
 				
@@ -108,7 +108,7 @@ public class PropertiesTest {
 				if (!file.exists()){
 				    Assert.fail("test video file does not exist");
 				}
-				if (file.isDirectory()){
+				if (!file.isFile()){
 				    Assert.fail("test video file doe not exist");
 				}
 				
@@ -120,6 +120,14 @@ public class PropertiesTest {
 				if (!file.isDirectory()){
 				    Assert.fail("output folder aint a folder");
 				}
+				file = new File(config.getTestJ3M());
+				if (!file.exists()){
+				    Assert.fail("tesst j3m file does not exist");
+				}
+				if (!file.isFile()){
+				    Assert.fail("tesst j3m file does not exist");
+				}
+				
 			
 			} catch (Exception e) {
 				Assert.fail("could not load properties file");
