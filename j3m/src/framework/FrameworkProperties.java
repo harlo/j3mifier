@@ -66,7 +66,9 @@ public class FrameworkProperties {
 	public String getVideoStillFileExt() {
 		return properties.getProperty("video_still_file_ext");
 	}
-	
+	public String getVideoConvertedFormat() {
+		return properties.getProperty("video_converted_format");
+	}
 	public String getThumbFileExt() {
 		return properties.getProperty("image_thumb_file_ext");
 	}
@@ -94,23 +96,23 @@ public class FrameworkProperties {
 	public int getImageLargeWidth() {
 		return Integer.parseInt(properties.getProperty("image_large_width"));
 	}
-	public int getVideoSmallHeight() {
-		return Integer.parseInt(properties.getProperty("video_small_height"));
+	public String getVideoSmallHeight() {
+		return properties.getProperty("video_small_height");
 	}
-	public int getVideoSmallWidth() {
-		return Integer.parseInt(properties.getProperty("video_small_width"));
+	public String getVideoSmallWidth() {
+		return properties.getProperty("video_small_width");
 	}
-	public int getVideoMedHeight() {
-		return Integer.parseInt(properties.getProperty("video_med_height"));
+	public String getVideoMedHeight() {
+		return properties.getProperty("video_med_height");
 	}
-	public int getVideoMedWidth() {
-		return Integer.parseInt(properties.getProperty("video_med_width"));
+	public String getVideoMedWidth() {
+		return properties.getProperty("video_med_width");
 	}
-	public int getVideoLargeHeight() {
-		return Integer.parseInt(properties.getProperty("video_large_height"));
+	public String getVideoLargeHeight() {
+		return properties.getProperty("video_large_height");
 	}
-	public int getVideoLargeWidth() {
-		return Integer.parseInt(properties.getProperty("video_large_width"));
+	public String getVideoLargeWidth() {
+		return properties.getProperty("video_large_width");
 	}
 	public String getffmpegChangeFormat() {
 		return properties.getProperty("ffmpeg_change_format");
@@ -135,7 +137,7 @@ public class FrameworkProperties {
 	
 		  Properties _properties = new Properties();
 	   	  try {
-			_properties.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("conf/conf.properties"));
+			_properties.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("conf.properties"));
 			} catch (Exception e) {
 				throw new RuntimeException("Could not load properties file", e);
 			}

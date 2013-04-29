@@ -13,9 +13,9 @@ import framework.FrameworkProperties;
 
 
 public class J3MWrapper {
-	public void extractMetaData(File inputFile, String outputFile ) throws J3MException{
+	public void extractMetaData(File inputFile, File outputFile ) throws J3MException{
 		FrameworkProperties config = FrameworkProperties.getInstance();
-		String command = Util.replaceFileMarkers(config.getJ3MGetMetadata(), inputFile.getAbsolutePath(), outputFile );
+		String command = Util.replaceFileMarkers(config.getJ3MGetMetadata(), inputFile.getAbsolutePath(), outputFile.getAbsolutePath() );
 		try {
 				//figure out the file name
 				Process p=Runtime.getRuntime().exec(command); 
@@ -32,8 +32,7 @@ public class J3MWrapper {
 	            reader=new BufferedReader(new InputStreamReader(p.getInputStream())); 
 			    line = reader.readLine();
 			    
-			    File metadata = new File(outputFile);
-				FileWriter writer = new FileWriter(metadata);
+			    FileWriter writer = new FileWriter(outputFile);
 				BufferedWriter out = new BufferedWriter(writer);
 				try {
 					while (line != null) {
@@ -41,7 +40,7 @@ public class J3MWrapper {
 						line = reader.readLine();
 					}
 				} catch (Exception e) {
-					throw new J3MException("Could create metadata file: " + outputFile, e);
+					throw new J3MException("Could create metadata file: " + outputFile.getAbsolutePath(), e);
 				}finally{
 					out.close();
 				}

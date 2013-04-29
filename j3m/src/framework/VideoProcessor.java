@@ -7,44 +7,36 @@ import util.Util;
 import ffmpeg.FfmpegException;
 import ffmpeg.FfmpegWrapper;
 
-public class VideoProcessor {
+public class VideoProcessor extends FileProcessor{
 	
-	File sourceFile; 
-	File outputFolder;
+	
 	
 	public VideoProcessor(File sourceFile, File outputFolder) {
-		super();
-		this.sourceFile = sourceFile;
-		this.outputFolder = outputFolder;
+		super(sourceFile, outputFolder);
 	}
-	
-	protected VideoProcessor() {
-		super();
-	}
-	
 	public void extractMetadata() throws FfmpegException{
-		String outFile = outputFolder.getAbsolutePath() +
-						Util.getBaseFileName(sourceFile.getName()) + "." + 
-						FrameworkProperties.getInstance().getVideoMetadataFileExt();
+		File outFile = new File(getOutputFolder(),
+						getSourceFileName() + "." + 
+						FrameworkProperties.getInstance().getVideoMetadataFileExt());
 		FfmpegWrapper ffmpeg = new FfmpegWrapper();
-		ffmpeg.extractMetadata(sourceFile, outFile);
+		ffmpeg.extractMetadata(getSourceFile(), outFile);
 		
 	}
 	public void createStillAndThumbnail() throws FfmpegException, Exception{
-		String stillFile = outputFolder.getAbsolutePath() +
-		Util.getBaseFileName(sourceFile.getName()) + "." + 
-		FrameworkProperties.getInstance().getVideoStillFileExt();
+		File stillFile = new File(getOutputFolder(),
+		Util.getBaseFileName(getSourceFile().getName()) + "." + 
+		FrameworkProperties.getInstance().getVideoStillFileExt());
 		FfmpegWrapper ffmpeg = new FfmpegWrapper();
 		try {
-			ffmpeg.createStill(sourceFile, stillFile);
+			ffmpeg.createStill(getSourceFile(), stillFile);
 		} catch (Exception e) {
 			throw new FfmpegException("Still file " + stillFile + " could not be created", e);
 		}
-		File thumbFile = new File(outputFolder.getAbsolutePath(),
-		"thumb_" + Util.getBaseFileName(sourceFile.getName()) + "." + 
+		File thumbFile = new File(getOutputFolder().getAbsolutePath(),
+		"thumb_" + getSourceFileName() + "." + 
 		FrameworkProperties.getInstance().getThumbFileExt());
 		try {
-			Util.resizeImage(sourceFile, thumbFile, 
+			Util.resizeImage(stillFile, thumbFile, 
 					FrameworkProperties.getInstance().getThumbWidth(), 
 					FrameworkProperties.getInstance().getThumbHeight());
 		} catch (Exception e) {
@@ -53,16 +45,16 @@ public class VideoProcessor {
 	}
 
 	public void toLowResolution(boolean updateSource)throws Exception{
-		String outFile = outputFolder.getAbsolutePath() +
-		"low_" + Util.getBaseFileName(sourceFile.getName()) + "." + 
-		Util.getFileExtenssion(sourceFile.getName());
+		File outFile = new File (getOutputFolder(),
+		"low_" + getSourceFileName() + "." + 
+		Util.getFileExtenssion(getSourceFile().getName()));
 		try {
 			FfmpegWrapper ffmpeg = new FfmpegWrapper();
-			ffmpeg.changeResolution(sourceFile, outFile, 
+			ffmpeg.changeResolution(getSourceFile(), outFile, 
 					FrameworkProperties.getInstance().getVideoSmallWidth(), 
 					FrameworkProperties.getInstance().getVideoSmallHeight());
 			if (updateSource) {
-				sourceFile = new File(outFile);
+				setSourceFile(outFile);
 			}
 		} catch (Exception e) {
 			throw new Exception("Low res video file " + outFile + " could not be created", e);
@@ -70,16 +62,16 @@ public class VideoProcessor {
 		
 	}
 	public void toMediumResolution(boolean updateSource)throws Exception{
-		String outFile = outputFolder.getAbsolutePath() +
-		"med_" + Util.getBaseFileName(sourceFile.getName()) + "." +
-		Util.getFileExtenssion(sourceFile.getName());
+		File outFile = new File(getOutputFolder(),
+		"med_" + getSourceFileName() + "." +
+		Util.getFileExtenssion(getSourceFile().getName()));
 		try {
 			FfmpegWrapper ffmpeg = new FfmpegWrapper();
-			ffmpeg.changeResolution(sourceFile, outFile, 
+			ffmpeg.changeResolution(getSourceFile(), outFile, 
 					FrameworkProperties.getInstance().getVideoMedWidth(), 
 					FrameworkProperties.getInstance().getVideoMedHeight());
 			if (updateSource) {
-				sourceFile = new File(outFile);
+				setSourceFile(outFile);
 			}
 		} catch (Exception e) {
 			throw new Exception("Medium res video file " + outFile + " could not be created", e);
@@ -87,43 +79,35 @@ public class VideoProcessor {
 		
 	}
 	public void toHighResolution(boolean updateSource) throws Exception{
-		String outFile = outputFolder.getAbsolutePath() +
-		"high_" + Util.getBaseFileName(sourceFile.getName()) + "." + 
-		Util.getFileExtenssion(sourceFile.getName());
+		File outFile = new File(getOutputFolder().getAbsolutePath() ,
+		"high_" + getSourceFileName() + "." + 
+		Util.getFileExtenssion(getSourceFile().getName()));
 		try {
 			FfmpegWrapper ffmpeg = new FfmpegWrapper();
-			ffmpeg.changeResolution(sourceFile, outFile, 
+			ffmpeg.changeResolution(getSourceFile(), outFile, 
 					FrameworkProperties.getInstance().getVideoLargeWidth(), 
 					FrameworkProperties.getInstance().getVideoLargeHeight());
 			if (updateSource) {
-				sourceFile = new File(outFile);
+				setSourceFile(outFile);
 			}
 		} catch (Exception e) {
 			throw new Exception("High res video file " + outFile + " could not be created", e);
 		}
 	}
-	//TODO what other format other than mp4?
+	
 	public void toOriginalResolution(boolean updateSource) throws Exception{
-		String outFile = outputFolder.getAbsolutePath() +
-		Util.getBaseFileName(sourceFile.getName()) + ".mp4";
-		//Util.getFileExtenssion(sourceFile.getName());
+		File outFile = new File(getOutputFolder().getAbsolutePath(),
+				getSourceFileName() + "." + FrameworkProperties.getInstance().getVideoConvertedFormat()); 
+		
 		try {
 			FfmpegWrapper ffmpeg = new FfmpegWrapper();
-			ffmpeg.changeResolution(sourceFile, outFile, 
-					FrameworkProperties.getInstance().getVideoLargeWidth(), 
-					FrameworkProperties.getInstance().getVideoLargeHeight());
+			ffmpeg.changeFormat(getSourceFile(), outFile);
 			if (updateSource) {
-				sourceFile = new File(outFile);
+				setSourceFile(outFile);
 			}
 		} catch (Exception e) {
 			throw new Exception("Reformatted video file " + outFile + " could not be created", e);
 		}
 	}
-	public void setSourceFile(File sourceFile){
-		this.sourceFile = sourceFile;
-	}
-	public void setOutputFolder(File outputFolder){
-		this.outputFolder = outputFolder;
-	}
-
+	
 }

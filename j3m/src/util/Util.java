@@ -29,6 +29,10 @@ public class Util {
 		}
 	}
 	
+	public static String replaceWidthHeight(String command, String width, String height){
+		return command.replace("<width>", ""+width).replace("<height>", ""+height);
+	}
+	
 	/**
 	 * Uses the imgscalr-java-image-scaling-library
 	 * http://www.thebuzzmedia.com/software/imgscalr-java-image-scaling-library/

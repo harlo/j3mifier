@@ -42,5 +42,12 @@ public class UtilTests {
 		Assert.assertTrue("Resized image file was not updated", timestamp < outFile.lastModified());
 
 	}
+	
+	@Test
+	public void replaceWidthHeightTest(){
+		String in = "ffmpeg.exe -i <infile> -filter:v scale=<width>:<height> -acodec copy <outfile>";
+		String out = Util.replaceWidthHeight( in,  "700",  "trunc(ow/a/2)*2");
+		Assert.assertEquals(out, "ffmpeg.exe -i <infile> -filter:v scale=700:-1 -acodec copy <outfile>");
+	}
 
 }

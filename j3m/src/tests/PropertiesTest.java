@@ -2,6 +2,7 @@ package tests;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 
 import org.junit.Test;
 import org.junit.Assert;
@@ -19,70 +20,72 @@ public class PropertiesTest {
 		FrameworkProperties config;
 		try {
 			config = FrameworkProperties.getInstance();
-			
-			//file formats
-			try {				
-				Assert.assertTrue(config.getImageInputTypes().contains("jpg"));
-			} catch (Exception e) {
-				Assert.fail("could not process image formats");
-			}
-			try {				
-				Assert.assertTrue(config.getVideoInputTypes().contains("mkv"));
-			} catch (Exception e) {
-				Assert.fail("could not process video formats");
-			}
-			//keywords containers and excluded words
-			try {				
-				Assert.assertTrue(config.getImageKeywordContainers().size()>0);
-			} catch (Exception e) {
-				Assert.fail("could not process keywords containers");
-			}
-			try {				
-				Assert.assertTrue(config.getImageKeywordExclussions().size()>0);
-			} catch (Exception e) {
-				Assert.fail("could not process keyword exclussions");
-			}
-			Assert.assertNotNull("No j3m metadata a command", config.getJ3MGetMetadata());
-			
-			
-			Assert.assertNotNull("No image metadata file type", config.getImageMetadataFileExt());
-			Assert.assertNotNull("No image keywords file type", config.getImageKeywordsFileExt());
-			Assert.assertNotNull("No video metadata file type", config.getVideoMetadataFileExt());
-			Assert.assertNotNull("No video metadata file type", config.getVideoStillFileExt());
-			
-			
-			Assert.assertNotNull("No thumb file type", config.getThumbFileExt());
-			Assert.assertTrue("No thumb file width", 0 < config.getThumbWidth());
-			Assert.assertTrue("No thumb file height", 0 < config.getThumbHeight());
-			
-			Assert.assertTrue("No small image width", 0 < config.getImageSmallWidth());
-			Assert.assertTrue("No small image height",0 <  config.getImageSmallHeight());
-			Assert.assertTrue("No med image width",0 <  config.getImageMedWidth());
-			Assert.assertTrue("No med image height",0 <  config.getImageMedHeight());
-			Assert.assertTrue("No large image width",0 <  config.getImageLargeWidth());
-			Assert.assertTrue("No large image height",0 <  config.getImageLargeHeight());
-			
-			Assert.assertTrue("No small video width",0 <  config.getVideoSmallWidth());
-			Assert.assertTrue("No small video height",0 <  config.getVideoSmallHeight());
-			Assert.assertTrue("No med video width",0 <  config.getVideoMedWidth());
-			Assert.assertTrue("No med video height",0 <  config.getVideoMedHeight());
-			Assert.assertTrue("No large video width",0 <  config.getVideoLargeWidth());
-			Assert.assertTrue("No large video height",0 <  config.getVideoLargeHeight());
-			
-			//check ffmpeg is working
-			Process p=Runtime.getRuntime().exec(config.getFfmpegVersion()); 
-			p.waitFor(); 
-			BufferedReader reader=new BufferedReader(new InputStreamReader(p.getInputStream())); 
-			String line=reader.readLine(); 
-			if (!line.contains("ffmpeg version")) 
-			{ 
-				Assert.fail("could not run ffmpeg from command line");
-			} 
-		
-		
 		} catch (Exception e) {
 			Assert.fail("could not load properties file");
+			throw e;
 		}
+		//file formats
+		try {				
+			Assert.assertTrue(config.getImageInputTypes().contains("jpg"));
+		} catch (Exception e) {
+			Assert.fail("could not process image formats");
+		}
+		try {				
+			Assert.assertTrue(config.getVideoInputTypes().contains("mkv"));
+		} catch (Exception e) {
+			Assert.fail("could not process video formats");
+		}
+		//keywords containers and excluded words
+		try {				
+			Assert.assertTrue(config.getImageKeywordContainers().size()>0);
+		} catch (Exception e) {
+			Assert.fail("could not process keywords containers");
+		}
+		try {				
+			Assert.assertTrue(config.getImageKeywordExclussions().size()>0);
+		} catch (Exception e) {
+			Assert.fail("could not process keyword exclussions");
+		}
+		Assert.assertNotNull("No j3m metadata a command", config.getJ3MGetMetadata());
+		
+		
+		Assert.assertNotNull("No image metadata file type", config.getImageMetadataFileExt());
+		Assert.assertNotNull("No image keywords file type", config.getImageKeywordsFileExt());
+		Assert.assertNotNull("No video metadata file type", config.getVideoMetadataFileExt());
+		Assert.assertNotNull("No video metadata file type", config.getVideoStillFileExt());
+		Assert.assertNotNull("No video conversion file type", config.getVideoConvertedFormat());
+		
+		
+		Assert.assertNotNull("No thumb file type", config.getThumbFileExt());
+		Assert.assertTrue("No thumb file width", 0 < config.getThumbWidth());
+		Assert.assertTrue("No thumb file height", 0 < config.getThumbHeight());
+		
+		Assert.assertTrue("No small image width", 0 < config.getImageSmallWidth());
+		Assert.assertTrue("No small image height",0 <  config.getImageSmallHeight());
+		Assert.assertTrue("No med image width",0 <  config.getImageMedWidth());
+		Assert.assertTrue("No med image height",0 <  config.getImageMedHeight());
+		Assert.assertTrue("No large image width",0 <  config.getImageLargeWidth());
+		Assert.assertTrue("No large image height",0 <  config.getImageLargeHeight());
+		
+		Assert.assertNotNull("No small video width", config.getVideoSmallWidth());
+		Assert.assertNotNull("No small video height", config.getVideoSmallHeight());
+		Assert.assertNotNull("No med video width", config.getVideoMedWidth());
+		Assert.assertNotNull("No med video height", config.getVideoMedHeight());
+		Assert.assertNotNull("No large video width", config.getVideoLargeWidth());
+		Assert.assertNotNull("No large video height", config.getVideoLargeHeight());
+		
+		//check ffmpeg is working
+		ProcessBuilder processBuilder = new ProcessBuilder(Arrays.asList(config.getFfmpegVersion().split(" ")));
+		processBuilder.redirectErrorStream(true);
+		Process p = processBuilder.start(); 
+		p.waitFor(); 
+		BufferedReader reader=new BufferedReader(new InputStreamReader(p.getInputStream())); 
+		String line=reader.readLine(); 
+		if (!line.contains("ffmpeg version")) 
+		{ 
+			Assert.fail("could not run ffmpeg from command line");
+		} 
+
 	}
 	
 	/**

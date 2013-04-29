@@ -18,14 +18,13 @@ public class ImageProcessorTest {
 		FrameworkProperties config = FrameworkProperties.getInstance();
 		ImageProcessor imageProcessor = new ImageProcessor(new File(config.getTestImage()), new File(config.getOutputFolder()));
 		File metadata = new File(config.getTestJ3M());
-		String outFile = config.getOutputFolder()+ "testKeywords.json";
+		File outFile = new File(config.getOutputFolder()+ "testKeywords.json");
 		long timestamp = System.currentTimeMillis();
 		imageProcessor.parseKeyWords(metadata, outFile);
-		File outputFile = new File(outFile);
-		if (!outputFile.exists()){
-		    Assert.fail("Extracted key words file " + outputFile.getPath() + " does not exist");
+		if (!outFile.exists()){
+		    Assert.fail("Extracted key words file " + outFile.getPath() + " does not exist");
 		}
-		Assert.assertTrue("keyword file timestamp doesnt reflect operation", timestamp < outputFile.lastModified());
+		Assert.assertTrue("keyword file timestamp doesnt reflect operation", timestamp < outFile.lastModified());
 
 	}
 

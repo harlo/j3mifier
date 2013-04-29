@@ -21,8 +21,8 @@ public class J3MWrapperTests {
 		File inFile = new File(config.getTestImage());
 		String output = config.getOutputFolder() + Util.getBaseFileName(inFile.getName()) + "." + config.getImageMetadataFileExt();
 		long timestamp = System.currentTimeMillis();
-		wrapper.extractMetaData(inFile, output);
 		File outputFile = new File(output);
+		wrapper.extractMetaData(inFile, outputFile);
 		if (!outputFile.exists()){
 		    Assert.fail("Extracted metadata file " + outputFile.getPath() + " does not exist");
 		}
