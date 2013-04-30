@@ -41,13 +41,13 @@ public class ImageProcessor extends FileProcessor{
 			throw new J3MException("Could not extract image metadata file : " + outFile.getAbsolutePath(), e);
 		}
 		File keyWordFile = new File (getOutputFolder(),
-		getSourceFileName() + "." + 
+		"key_words_" + getSourceFileName() + "." + 
 		FrameworkProperties.getInstance().getImageKeywordsFileExt());
 		
 		try {
 			parseKeyWords(outFile, keyWordFile);
 		} catch (Exception e) {
-			throw new Exception("Could not create image keyword file : " + outFile.getAbsolutePath(), e);
+			throw new Exception("Could not create image keyword file : " + keyWordFile.getAbsolutePath(), e);
 		}
 		
 	}
