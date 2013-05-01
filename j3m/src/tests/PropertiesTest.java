@@ -55,6 +55,8 @@ public class PropertiesTest {
 		Assert.assertNotNull("No video metadata file type", config.getVideoStillFileExt());
 		Assert.assertNotNull("No video conversion file type", config.getVideoConvertedFormat());
 		
+		Assert.assertNotNull("No ffmpeg@theora command", config.getffmpeg2Theora());
+		
 		
 		Assert.assertNotNull("No thumb file type", config.getThumbFileExt());
 		Assert.assertTrue("No thumb file width", 0 < config.getThumbWidth());

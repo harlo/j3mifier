@@ -12,4 +12,9 @@ public class FfmpegException extends Exception {
 		// TODO Auto-generated constructor stub
 	}
 
+	public FfmpegException(String arg0) {
+		super(arg0);
+		// TODO Auto-generated constructor stub
+	}
+
 }

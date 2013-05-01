@@ -36,6 +36,22 @@ public class FfmpegWrapper {
 	}
 
 
+	/**
+	 * Needs to have the input file in mp4 format
+	 * @param inputFile
+	 * @return
+	 * @throws FfmpegException 
+	 */
+	public void convertToOgv(File inputFile) throws FfmpegException{
+		if ("mp4".equals(Util.getFileExtenssion(inputFile.getName()))){
+			FrameworkProperties config = FrameworkProperties.getInstance();
+			runCommand(inputFile,inputFile,config.getffmpeg2Theora());
+		}else {
+			throw new FfmpegException(inputFile + " not in mp4 format");
+		}
+
+	}
+	
 	private int runCommand(File inputFile, File outputFile, String command) throws FfmpegException {
 		try {
 			//figure out the file name

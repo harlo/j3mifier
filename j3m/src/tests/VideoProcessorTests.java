@@ -39,6 +39,11 @@ public class VideoProcessorTests {
 		    Assert.fail("converted video file " + outputFile.getPath() + " does not exist");
 		}
 		Assert.assertTrue("converted video file timestamp doesnt reflect operation", timestamp < outputFile.lastModified());
+		File ogvFile = new File (config.getOutputFolder(), Util.getBaseFileName(config.getTestVideo()) + ".ogv");
+		if (!ogvFile.exists()){
+		    Assert.fail("converted ogv video file " + ogvFile.getPath() + " does not exist");
+		}
+		Assert.assertTrue("converted ogv video file timestamp doesnt reflect operation", timestamp < ogvFile.lastModified());
 	}
 	
 	
@@ -68,6 +73,11 @@ public class VideoProcessorTests {
 		    Assert.fail("High res video file " + outputFile.getPath() + " does not exist");
 		}
 		Assert.assertTrue("High res video file timestamp doesnt reflect operation", timestamp < outputFile.lastModified());
+		File ogvFile = new File (config.getOutputFolder(),"high_" +  Util.getBaseFileName(config.getTestVideo()) + ".ogv");
+		if (!ogvFile.exists()){
+		    Assert.fail("converted ogv video file " + ogvFile.getPath() + " does not exist");
+		}
+		Assert.assertTrue("converted ogv video file timestamp doesnt reflect operation", timestamp < ogvFile.lastModified());
 	}
 	
 
@@ -81,6 +91,11 @@ public class VideoProcessorTests {
 		    Assert.fail("Medium res video file " + outputFile.getPath() + " does not exist");
 		}
 		Assert.assertTrue("Medium res video file timestamp doesnt reflect operation", timestamp < outputFile.lastModified());
+		File ogvFile = new File (config.getOutputFolder(), "med_" + Util.getBaseFileName(config.getTestVideo()) + ".ogv");
+		if (!ogvFile.exists()){
+		    Assert.fail("converted ogv video file " + ogvFile.getPath() + " does not exist");
+		}
+		Assert.assertTrue("converted ogv video file timestamp doesnt reflect operation", timestamp < ogvFile.lastModified());
 	}
 	
 
@@ -94,5 +109,10 @@ public class VideoProcessorTests {
 		    Assert.fail("Low res video file " + outputFile.getPath() + " does not exist");
 		}
 		Assert.assertTrue("Low res video file timestamp doesnt reflect operation", timestamp < outputFile.lastModified());
+		File ogvFile = new File (config.getOutputFolder(),"low_" +  Util.getBaseFileName(config.getTestVideo()) + ".ogv");
+		if (!ogvFile.exists()){
+		    Assert.fail("converted ogv video file " + ogvFile.getPath() + " does not exist");
+		}
+		Assert.assertTrue("converted ogv video file timestamp doesnt reflect operation", timestamp < ogvFile.lastModified());
 	}	
 }

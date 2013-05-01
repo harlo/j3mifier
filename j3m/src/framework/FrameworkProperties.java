@@ -123,7 +123,10 @@ public class FrameworkProperties {
 	public String getffmpegCreateStill() {
 		return properties.getProperty("ffmpeg_create_still");
 	}
-
+	public String getffmpeg2Theora() {
+		return properties.getProperty("ffmpeg_theora");
+	}
+	
 	protected FrameworkProperties() {
 		super();
 		// TODO Auto-generated constructor stub

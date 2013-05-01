@@ -56,6 +56,8 @@ public class VideoProcessor extends FileProcessor{
 			if (updateSource) {
 				setSourceFile(outFile);
 			}
+			// create an ogv version
+			ffmpeg.convertToOgv(outFile);
 		} catch (Exception e) {
 			throw new Exception("Low res video file " + outFile + " could not be created", e);
 		}
@@ -73,6 +75,8 @@ public class VideoProcessor extends FileProcessor{
 			if (updateSource) {
 				setSourceFile(outFile);
 			}
+			// create an ogv version
+			ffmpeg.convertToOgv(outFile);
 		} catch (Exception e) {
 			throw new Exception("Medium res video file " + outFile + " could not be created", e);
 		}
@@ -90,6 +94,8 @@ public class VideoProcessor extends FileProcessor{
 			if (updateSource) {
 				setSourceFile(outFile);
 			}
+			// create an ogv version
+			ffmpeg.convertToOgv(outFile);
 		} catch (Exception e) {
 			throw new Exception("High res video file " + outFile + " could not be created", e);
 		}
@@ -105,6 +111,8 @@ public class VideoProcessor extends FileProcessor{
 			if (updateSource) {
 				setSourceFile(outFile);
 			}
+			// create an ogv version
+			ffmpeg.convertToOgv(outFile);
 		} catch (Exception e) {
 			throw new Exception("Reformatted video file " + outFile + " could not be created", e);
 		}
