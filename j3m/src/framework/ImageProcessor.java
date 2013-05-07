@@ -12,6 +12,7 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import util.JSONStripper;
 import util.JSONTreeSearcher;
 import util.Util;
 
@@ -40,6 +41,10 @@ public class ImageProcessor extends FileProcessor{
 		} catch (Exception e) {
 			throw new J3MException("Could not extract image metadata file : " + outFile.getAbsolutePath(), e);
 		}
+		//Clean out any non json text
+		JSONStripper stripper = new JSONStripper(outFile,outFile);
+		stripper.cleanFile();
+		
 		File keyWordFile = new File (getOutputFolder(),
 		"key_words_" + getSourceFileName() + "." + 
 		FrameworkProperties.getInstance().getImageKeywordsFileExt());
