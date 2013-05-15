@@ -60,7 +60,9 @@ public class JSONTreeSearcher {
 				}
 			}
 			if (i == currentPath.length && keepLooking){
-				results.add(element.getAsString());
+				if (null != element){
+					results.add(element.toString());
+				}
 			}
 		}
 		
