@@ -2,11 +2,11 @@ package ffmpeg;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 
 import util.Util;
+import util.StreamDump;
 
 import framework.FrameworkProperties;
 
@@ -62,16 +62,8 @@ public class FfmpegWrapper {
 			new Thread(new StreamDump(p.getInputStream()), "output stream").start();
 			p.waitFor(); 
 			
-			BufferedReader reader=new BufferedReader(new InputStreamReader(p.getErrorStream())); 
-			String line = reader.readLine();
-
-            while(line != null) {
-                System.err.println(line);
-                line = reader.readLine();
-            }
-            
-            reader=new BufferedReader(new InputStreamReader(p.getInputStream())); 
-		    line = reader.readLine();
+            BufferedReader reader=new BufferedReader(new InputStreamReader(p.getInputStream())); 
+            String line = reader.readLine();
 
             while(line != null) {
                 System.out.println(line);
@@ -85,22 +77,5 @@ public class FfmpegWrapper {
 			throw new FfmpegException("Could not run the ffmpeg command: " + command, e);
 		} 
 		
-	}
-
-	class StreamDump implements Runnable {
-	    private InputStream stream;
-	    StreamDump(InputStream input) {
-	        this.stream = input;
-	    }
-	    public void run() {
-	        try {
-	            int c;
-	            while ((c = stream.read()) != -1) {
-	                System.out.write(c);
-	            }
-	        } catch (Throwable t) {
-	            t.printStackTrace();
-	        }
-	    }
 	}
 }
