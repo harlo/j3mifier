@@ -6,9 +6,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 public class JSONTreeSearcher {
@@ -61,11 +64,28 @@ public class JSONTreeSearcher {
 			}
 			if (i == currentPath.length && keepLooking){
 				if (null != element){
-					results.add(element.toString());
+					extractEndStrings(element);
 				}
 			}
 		}
 		
+	}
+	
+	private void extractEndStrings(JsonElement element) {
+		if (element.isJsonObject()){
+			JsonObject object = element.getAsJsonObject();
+			Set<Map.Entry<String, JsonElement>> entrySet = object.entrySet();
+			for (Map.Entry<String, JsonElement> entry : entrySet) {
+				extractEndStrings(entry.getValue());
+			}
+		}else if(element.isJsonArray()){
+			JsonArray array = element.getAsJsonArray();	
+			for (int j = 0; j < array.size(); j++) {
+				extractEndStrings(array.get(j));
+			}
+		}else {
+			results.add(element.getAsString());
+		}
 	}
 	
 	private class JSONBranch {
