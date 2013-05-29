@@ -37,23 +37,25 @@ public class JSONStripper {
 	
 	private void stripFile () throws Exception {
 		BufferedReader reader = new BufferedReader(new FileReader(sourceFile));
-		StringBuilder contents = new StringBuilder();
+		StringBuilder contents = new StringBuilder("");
 		String line = reader.readLine();
 		String json;
+		boolean jsonFound = true;
 		if (!line.startsWith("{")) {
 			while (line != null && !line.contains("{")){
 				line = reader.readLine();
 			}
 			if (line == null) {
-				throw new Exception ("File did not contain json markers");
+				jsonFound = false;
+			}else {
+				line = line.substring(line.indexOf("{"));
 			}
-			line = line.substring(line.indexOf("{"));
 		}
 		while (line != null) {
 			contents.append(line);
 			line = reader.readLine();
 		}
-		if (!contents.toString().endsWith("}")){
+		if (jsonFound && !contents.toString().endsWith("}")){
 			int lastMark = contents.lastIndexOf("}");
 			json = contents.substring(0, lastMark +1);
 		}else {
