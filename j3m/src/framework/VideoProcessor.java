@@ -1,6 +1,7 @@
 package framework;
 
 import java.io.File;
+import java.security.NoSuchAlgorithmException;
 
 import util.Util;
 
@@ -118,4 +119,17 @@ public class VideoProcessor extends FileProcessor{
 		}
 	}
 	
+	public String getVideoHash() throws FfmpegException, NoSuchAlgorithmException {
+		FfmpegWrapper ffmpeg = new FfmpegWrapper();
+		String md5 = ffmpeg.getVideoRgbMd5(getSourceFile());
+		return Util.saltAndHash(md5, FrameworkProperties.getInstance().getSalt());
+		
+	}
+	
+	public String getAudioHash() throws FfmpegException, NoSuchAlgorithmException {
+		FfmpegWrapper ffmpeg = new FfmpegWrapper();
+		String md5 = ffmpeg.getAudioMd5(getSourceFile());
+		return Util.saltAndHash(md5, FrameworkProperties.getInstance().getSalt());
+		
+	}
 }

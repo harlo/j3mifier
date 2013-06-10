@@ -3,7 +3,7 @@ package j3m;
 import java.io.File;
 import java.util.Arrays;
 
-import util.StreamDump;
+import util.StreamToFile;
 import util.Util;
 import framework.FrameworkProperties;
 
@@ -18,7 +18,9 @@ public class J3MWrapper {
 			ProcessBuilder processBuilder = new ProcessBuilder(Arrays.asList(command.split(" ")));
 			processBuilder.redirectErrorStream(true);
 			Process p = processBuilder.start();
-			new Thread(new StreamDump(p.getInputStream(), outputFile), "output stream").start();
+			StreamToFile streamProcessor = new StreamToFile(outputFile);
+			streamProcessor.setStream(p.getInputStream());
+			new Thread(streamProcessor, "output stream").start();
 			p.waitFor(); 
 				
 		} catch (Exception e) {

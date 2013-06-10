@@ -1,12 +1,12 @@
 package ffmpeg;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStreamReader;
 import java.util.Arrays;
 
+import util.StreamTo;
+import util.StreamToStdOut;
+import util.StreamToString;
 import util.Util;
-import util.StreamDump;
 
 import framework.FrameworkProperties;
 
@@ -53,22 +53,19 @@ public class FfmpegWrapper {
 	}
 	
 	private int runCommand(File inputFile, File outputFile, String command) throws FfmpegException {
+		StreamToStdOut streamProcessor = new StreamToStdOut();
+		return runCommand(inputFile, outputFile, command, streamProcessor);
+	}
+	private int runCommand(File inputFile, File outputFile, String command, StreamTo processor) throws FfmpegException {
 		try {
 			//figure out the file name
 			command = Util.replaceFileMarkers(command, inputFile.getAbsolutePath(), outputFile.getAbsolutePath());
 			ProcessBuilder processBuilder = new ProcessBuilder(Arrays.asList(command.split(" ")));
 			processBuilder.redirectErrorStream(true);
 			Process p = processBuilder.start();
-			new Thread(new StreamDump(p.getInputStream()), "output stream").start();
+			processor.setStream(p.getInputStream());
+			new Thread(processor, "output stream").start();
 			p.waitFor(); 
-			
-            BufferedReader reader=new BufferedReader(new InputStreamReader(p.getInputStream())); 
-            String line = reader.readLine();
-
-            while(line != null) {
-                System.out.println(line);
-                line = reader.readLine();
-            }
 
             int exitValue = p.exitValue();
             return exitValue;
@@ -77,5 +74,19 @@ public class FfmpegWrapper {
 			throw new FfmpegException("Could not run the ffmpeg command: " + command, e);
 		} 
 		
+	}
+	
+	public String getVideoRgbMd5(File inputFile) throws FfmpegException   {
+		FrameworkProperties config = FrameworkProperties.getInstance();
+		StreamToString streamProcessor = new StreamToString("([.]*)MD5=([^ \\.]*)(\\n)");
+		runCommand(inputFile,inputFile,config.getffmpegVideoRgbMd5(),streamProcessor);
+		return streamProcessor.getResult();
+	}
+	
+	public String getAudioMd5(File inputFile) throws FfmpegException   {
+		FrameworkProperties config = FrameworkProperties.getInstance();
+		StreamToString streamProcessor = new StreamToString("([.]*)MD5=([^ \\.]*)(\\n)");
+		runCommand(inputFile,inputFile,config.getffmpegAudioMd5(),streamProcessor);
+		return streamProcessor.getResult();
 	}
 }

@@ -2,7 +2,11 @@ package util;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.nio.charset.Charset;
 
+import org.bouncycastle.util.encoders.Hex;
 
 import javax.imageio.ImageIO;
 
@@ -50,4 +54,11 @@ public class Util {
 	}
 	
 
+	public static String saltAndHash(String data, String salt) throws NoSuchAlgorithmException{
+		String payload = data + salt;
+		MessageDigest digester = MessageDigest.getInstance("SHA-1"); //MD5 or SHA-1
+		digester.update(payload.getBytes());
+		byte[] messageDigest = digester.digest();
+		return new String(Hex.encode(messageDigest), Charset.forName("UTF-8"));
+	}
 }

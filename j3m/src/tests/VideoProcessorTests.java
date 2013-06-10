@@ -115,4 +115,14 @@ public class VideoProcessorTests {
 		}
 		Assert.assertTrue("converted ogv video file timestamp doesnt reflect operation", timestamp < ogvFile.lastModified());
 	}	
+	
+	@Test
+	public void getHashTest() throws Exception {
+		setUP();
+		Assert.assertNotNull("No audio hash", videoProcessor.getAudioHash());
+		Assert.assertEquals("Audion hash not repeatable", videoProcessor.getAudioHash(), videoProcessor.getAudioHash());
+		
+		Assert.assertNotNull("No video hash", videoProcessor.getVideoHash());
+		Assert.assertEquals("Video hash not repeatable", videoProcessor.getVideoHash(), videoProcessor.getVideoHash());
+	}
 }

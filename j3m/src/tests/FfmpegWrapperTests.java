@@ -44,4 +44,26 @@ public class FfmpegWrapperTests {
 		}
 		
 	}
+	
+	@Test
+	public void getRgbMd5Test() throws Exception {
+		FfmpegWrapper wrapper = new FfmpegWrapper();
+		FrameworkProperties config = FrameworkProperties.getInstance();
+		File inFile = new File(config.getTestVideo());
+		String firstHash = wrapper.getVideoRgbMd5(inFile);
+		String secondHash = wrapper.getVideoRgbMd5(inFile);
+		Assert.assertNotNull("Computed hash empty",firstHash);
+		Assert.assertEquals(firstHash, secondHash);
+	}
+	
+	@Test
+	public void getAudioMd5Test() throws Exception {
+		FfmpegWrapper wrapper = new FfmpegWrapper();
+		FrameworkProperties config = FrameworkProperties.getInstance();
+		File inFile = new File(config.getTestVideo());
+		String firstHash = wrapper.getAudioMd5(inFile);
+		String secondHash = wrapper.getAudioMd5(inFile);
+		Assert.assertNotNull("Computed hash empty",firstHash);
+		Assert.assertEquals(firstHash, secondHash);
+	}
 }

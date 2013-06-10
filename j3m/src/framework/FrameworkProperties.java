@@ -126,6 +126,18 @@ public class FrameworkProperties {
 	public String getffmpeg2Theora() {
 		return properties.getProperty("ffmpeg_theora");
 	}
+	public String getffmpegRGB() {
+		return properties.getProperty("ffmpeg_frame_rgb");
+	}
+	public String getffmpegVideoRgbMd5() {
+		return properties.getProperty("ffmpeg_video_rgb_md5");
+	}
+	public String getffmpegAudioMd5() {
+		return properties.getProperty("ffmpeg_audio_md5");
+	}
+	public String getSalt(){
+		return properties.getProperty("salt");
+	}
 	
 	protected FrameworkProperties() {
 		super();

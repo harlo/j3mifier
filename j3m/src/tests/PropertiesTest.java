@@ -56,6 +56,10 @@ public class PropertiesTest {
 		Assert.assertNotNull("No video conversion file type", config.getVideoConvertedFormat());
 		
 		Assert.assertNotNull("No ffmpeg@theora command", config.getffmpeg2Theora());
+		Assert.assertNotNull("No ffmpeg_frame_rgb command", config.getffmpegRGB());
+		Assert.assertNotNull("No ffmpeg_video_rgb_md5 command", config.getffmpegVideoRgbMd5());
+		Assert.assertNotNull("No ffmpeg_audio_md5 command", config.getffmpegAudioMd5());
+		Assert.assertNotNull("No salt command", config.getSalt());
 		
 		
 		Assert.assertNotNull("No thumb file type", config.getThumbFileExt());
