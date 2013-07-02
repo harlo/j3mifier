@@ -13,11 +13,11 @@ Follow these steps to setup your dev environment and build:
 
 2. cd j3m
 
-3. run "ant compile"
+3. run "ant dist" to build the distribution jar
 
 4. Test the output by running:
 
-> java -cp dist/lib/j3mifier-20130702.jar framework.MediaProcessor
+> java -cp dist/lib/j3mifier-20130702.jar:conf framework.MediaProcessor
 
 
 
