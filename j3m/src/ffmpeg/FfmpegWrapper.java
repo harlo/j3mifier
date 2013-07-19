@@ -1,8 +1,7 @@
 package ffmpeg;
 
 import java.io.File;
-import java.util.Arrays;
-
+import util.CommandRunner;
 import util.StreamTo;
 import util.StreamToStdOut;
 import util.StreamToString;
@@ -10,6 +9,11 @@ import util.Util;
 
 import framework.FrameworkProperties;
 
+/***
+ * Wrapper for the command line ffmpeg utility used for video processsing
+ * @author NB
+ *
+ */
 
 public class FfmpegWrapper {
 
@@ -43,7 +47,7 @@ public class FfmpegWrapper {
 	 * @throws FfmpegException 
 	 */
 	public void convertToOgv(File inputFile) throws FfmpegException{
-		if ("mp4".equals(Util.getFileExtenssion(inputFile.getName()))){
+		if ("mp4".equals(Util.getFileExtenssion(inputFile))){
 			FrameworkProperties config = FrameworkProperties.getInstance();
 			runCommand(inputFile,inputFile,config.getffmpeg2Theora());
 		}else {
@@ -60,15 +64,8 @@ public class FfmpegWrapper {
 		try {
 			//figure out the file name
 			command = Util.replaceFileMarkers(command, inputFile.getAbsolutePath(), outputFile.getAbsolutePath());
-			ProcessBuilder processBuilder = new ProcessBuilder(Arrays.asList(command.split(" ")));
-			processBuilder.redirectErrorStream(true);
-			Process p = processBuilder.start();
-			processor.setStream(p.getInputStream());
-			new Thread(processor, "output stream").start();
-			p.waitFor(); 
-
-            int exitValue = p.exitValue();
-            return exitValue;
+			CommandRunner commandRunner = new CommandRunner();
+            return commandRunner.runCommand(command, processor);
 			
 		} catch (Exception e) {
 			throw new FfmpegException("Could not run the ffmpeg command: " + command, e);

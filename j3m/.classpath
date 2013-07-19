@@ -7,5 +7,7 @@
 	<classpathentry exported="true" kind="lib" path="C:/Users/NB/Documents/harlo/google-gson-2.2.3/gson-2.2.3.jar" sourcepath="C:/Users/NB/Documents/harlo/google-gson-2.2.3/gson-2.2.3-sources.jar"/>
 	<classpathentry kind="lib" path="C:/Users/NB/Documents/harlo/google-gson-2.2.3/gson-2.2.3-javadoc.jar"/>
 	<classpathentry kind="lib" path="C:/Users/NB/Documents/harlo/google-gson-2.2.3/gson-2.2.3-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/Users/NB/Documents/GitHub/InformaCam/libs/commons-codec-1.6.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/Users/NB/Documents/GitHub/InformaCam/libs/commons-io-2.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

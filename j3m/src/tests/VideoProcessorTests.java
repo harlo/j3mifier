@@ -11,12 +11,14 @@ import framework.VideoProcessor;
 
 public class VideoProcessorTests {
 	
+	FrameworkProperties config = FrameworkProperties.getInstance();
+	TestProperties testConfig = TestProperties.getInstance();
+	
 	private VideoProcessor videoProcessor;
 	
 	
 	public void setUP() {
-		FrameworkProperties config = FrameworkProperties.getInstance();
-		videoProcessor = new VideoProcessor(new File(config.getTestVideo()), new File(config.getOutputFolder()));
+		videoProcessor = new VideoProcessor(new File(testConfig.getTestVideo()), new File(testConfig.getOutputFolder()));
 	}
 	
 	@Test
@@ -30,8 +32,7 @@ public class VideoProcessorTests {
 	}
 	
 	public void toOriginalResolutionTest() throws Exception{
-		FrameworkProperties config = FrameworkProperties.getInstance();
-		String outFile = config.getOutputFolder()+ Util.getBaseFileName(config.getTestVideo()) + "." + config.getVideoConvertedFormat() ;
+		String outFile = testConfig.getOutputFolder()+ Util.getBaseFileName(testConfig.getTestVideo()) + "." + config.getVideoConvertedFormat() ;
 		long timestamp = System.currentTimeMillis();
 		videoProcessor.toOriginalResolution(true);
 		File outputFile = new File(outFile);
@@ -39,7 +40,7 @@ public class VideoProcessorTests {
 		    Assert.fail("converted video file " + outputFile.getPath() + " does not exist");
 		}
 		Assert.assertTrue("converted video file timestamp doesnt reflect operation", timestamp < outputFile.lastModified());
-		File ogvFile = new File (config.getOutputFolder(), Util.getBaseFileName(config.getTestVideo()) + ".ogv");
+		File ogvFile = new File (testConfig.getOutputFolder(), Util.getBaseFileName(testConfig.getTestVideo()) + ".ogv");
 		if (!ogvFile.exists()){
 		    Assert.fail("converted ogv video file " + ogvFile.getPath() + " does not exist");
 		}
@@ -48,9 +49,8 @@ public class VideoProcessorTests {
 	
 	
 	public void createStillAndThumbnailTest() throws Exception {
-		FrameworkProperties config = FrameworkProperties.getInstance();
-		File stillFile =  new File(config.getOutputFolder(),  Util.getBaseFileName(config.getTestVideo()) + "." + config.getVideoStillFileExt());
-		File thumbFile =  new File(config.getOutputFolder(),  "thumb_" + Util.getBaseFileName(config.getTestVideo()) + "." + config.getThumbFileExt());
+		File stillFile =  new File(testConfig.getOutputFolder(),  Util.getBaseFileName(testConfig.getTestVideo()) + "." + config.getVideoStillFileExt());
+		File thumbFile =  new File(testConfig.getOutputFolder(),  "thumb_" + Util.getBaseFileName(testConfig.getTestVideo()) + "." + config.getThumbFileExt());
 		long timestamp = System.currentTimeMillis();
 		videoProcessor.createStillAndThumbnail();
 		if (!stillFile.exists()){
@@ -64,8 +64,7 @@ public class VideoProcessorTests {
 	}
 	
 	public void toHighResolutionTest() throws Exception {
-		FrameworkProperties config = FrameworkProperties.getInstance();
-		String outFile = config.getOutputFolder()+ "high_" + Util.getBaseFileName(config.getTestVideo()) + "." + config.getVideoConvertedFormat();
+		String outFile = testConfig.getOutputFolder()+ "high_" + Util.getBaseFileName(testConfig.getTestVideo()) + "." + config.getVideoConvertedFormat();
 		long timestamp = System.currentTimeMillis();
 		videoProcessor.toHighResolution(true);
 		File outputFile = new File(outFile);
@@ -73,7 +72,7 @@ public class VideoProcessorTests {
 		    Assert.fail("High res video file " + outputFile.getPath() + " does not exist");
 		}
 		Assert.assertTrue("High res video file timestamp doesnt reflect operation", timestamp < outputFile.lastModified());
-		File ogvFile = new File (config.getOutputFolder(),"high_" +  Util.getBaseFileName(config.getTestVideo()) + ".ogv");
+		File ogvFile = new File (testConfig.getOutputFolder(),"high_" +  Util.getBaseFileName(testConfig.getTestVideo()) + ".ogv");
 		if (!ogvFile.exists()){
 		    Assert.fail("converted ogv video file " + ogvFile.getPath() + " does not exist");
 		}
@@ -82,8 +81,7 @@ public class VideoProcessorTests {
 	
 
 	public void toMediumResolutionTest() throws Exception {
-		FrameworkProperties config = FrameworkProperties.getInstance();
-		String outFile = config.getOutputFolder()+ "med_" + Util.getBaseFileName(config.getTestVideo()) + "." + config.getVideoConvertedFormat();
+		String outFile = testConfig.getOutputFolder()+ "med_" + Util.getBaseFileName(testConfig.getTestVideo()) + "." + config.getVideoConvertedFormat();
 		long timestamp = System.currentTimeMillis();
 		videoProcessor.toMediumResolution(false);
 		File outputFile = new File(outFile);
@@ -91,7 +89,7 @@ public class VideoProcessorTests {
 		    Assert.fail("Medium res video file " + outputFile.getPath() + " does not exist");
 		}
 		Assert.assertTrue("Medium res video file timestamp doesnt reflect operation", timestamp < outputFile.lastModified());
-		File ogvFile = new File (config.getOutputFolder(), "med_" + Util.getBaseFileName(config.getTestVideo()) + ".ogv");
+		File ogvFile = new File (testConfig.getOutputFolder(), "med_" + Util.getBaseFileName(testConfig.getTestVideo()) + ".ogv");
 		if (!ogvFile.exists()){
 		    Assert.fail("converted ogv video file " + ogvFile.getPath() + " does not exist");
 		}
@@ -100,8 +98,7 @@ public class VideoProcessorTests {
 	
 
 	public void toLowResolutionTest() throws Exception {
-		FrameworkProperties config = FrameworkProperties.getInstance();
-		String outFile = config.getOutputFolder()+ "low_" + Util.getBaseFileName(config.getTestVideo()) + "." + config.getVideoConvertedFormat();
+		String outFile = testConfig.getOutputFolder()+ "low_" + Util.getBaseFileName(testConfig.getTestVideo()) + "." + config.getVideoConvertedFormat();
 		long timestamp = System.currentTimeMillis();
 		videoProcessor.toLowResolution(false);
 		File outputFile = new File(outFile);
@@ -109,7 +106,7 @@ public class VideoProcessorTests {
 		    Assert.fail("Low res video file " + outputFile.getPath() + " does not exist");
 		}
 		Assert.assertTrue("Low res video file timestamp doesnt reflect operation", timestamp < outputFile.lastModified());
-		File ogvFile = new File (config.getOutputFolder(),"low_" +  Util.getBaseFileName(config.getTestVideo()) + ".ogv");
+		File ogvFile = new File (testConfig.getOutputFolder(),"low_" +  Util.getBaseFileName(testConfig.getTestVideo()) + ".ogv");
 		if (!ogvFile.exists()){
 		    Assert.fail("converted ogv video file " + ogvFile.getPath() + " does not exist");
 		}
@@ -124,5 +121,11 @@ public class VideoProcessorTests {
 		
 		Assert.assertNotNull("No video hash", videoProcessor.getVideoHash());
 		Assert.assertEquals("Video hash not repeatable", videoProcessor.getVideoHash(), videoProcessor.getVideoHash());
+	}
+	
+	@Test 
+	public void processMetadatTest() throws Exception {
+		VideoProcessor videoProcessor = new VideoProcessor(new File(testConfig.getTestVideo()), new File(testConfig.getOutputFolder()));
+		videoProcessor.processMetadata();
 	}
 }

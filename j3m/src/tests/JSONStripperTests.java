@@ -5,17 +5,18 @@ import java.io.File;
 import org.junit.Assert;
 import org.junit.Test;
 
-import util.JSONStripper;
+import util.*;
 
 import framework.FrameworkProperties;
 
 public class JSONStripperTests {
+	FrameworkProperties config = FrameworkProperties.getInstance();
+	TestProperties testConfig = TestProperties.getInstance();
 
 	@Test
 	public void testCleanFile() throws Exception {
-		FrameworkProperties config = FrameworkProperties.getInstance();
-		File inFile = new File(config.getTestJ3M());
-		File outFile = new File(config.getTestJ3M());
+		File inFile = new File(testConfig.getDirtyJ3M());
+		File outFile = new File(testConfig.getOutputFolder() + Util.getBaseFileName(inFile) + "_clean.json");
 		JSONStripper stripper = new JSONStripper(inFile,outFile);
 		long timestamp = System.currentTimeMillis();
 		stripper.cleanFile();

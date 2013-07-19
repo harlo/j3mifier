@@ -15,21 +15,52 @@ public class FrameworkProperties {
 		this.properties = properties;
 	}
 	
-	public String getOutputFolder() {
-		return properties.getProperty("output_folder");
+	public boolean getLenient() {
+		return Boolean.valueOf(properties.getProperty("framework_lenient"));
 	}
-	public String getTestImage() {
-		return properties.getProperty("test_image");
+	public boolean getVerbose() {
+		return Boolean.valueOf(properties.getProperty("framework_verbose"));
 	}
-	public String getTestVideo() {
-		return properties.getProperty("test_video");
+	public void setLenient(boolean setting) {
+		properties.setProperty("framework_lenient",String.valueOf(setting));
 	}
-	public String getTestJ3M() {
-		return properties.getProperty("test_j3m");
+	public void setVerbose(boolean setting) {
+		properties.setProperty("framework_verbose",String.valueOf(setting));
 	}
+	
+	public List<String> getKeywordContainers() {
+		return Arrays.asList(properties.getProperty("keyword_container_elements").split(","));
+	}
+	public List<String> getKeywordExclussions() {
+		return Arrays.asList(properties.getProperty("keywords_excluded_words").split(","));
+	}
+	public String getSignatureContainer() {
+		return properties.getProperty("gpg_signature");
+	}
+	public String getJ3mContainer() {
+		return properties.getProperty("j3m_body");
+	}
+	
+	public String getGpgVerifySignature() {
+		return properties.getProperty("gpg_verify_signature");
+	}
+	public String getGpgSignatureOK() {
+		return properties.getProperty("gpg_signature_verified");
+	}
+	public String getGpgDecrypt() {
+		return properties.getProperty("gpg_decrypt");
+	}
+	public String getGpgPassword() {
+		return properties.getProperty("gpg_password_file");
+	}
+	
 	public String getJ3MGetMetadata() {
 		return properties.getProperty("j3m_get_metadata");
 	}
+	public List<String> getJ3MIgnoreLines() {
+		return Arrays.asList(properties.getProperty("j3m_output_ignore_lines").split(";"));
+	}
+	
 	public String getFfmpegVersion() {
 		return properties.getProperty("ffmpeg_version");
 	}
@@ -42,12 +73,8 @@ public class FrameworkProperties {
 	public List<String> getImageInputTypes() {
 		return Arrays.asList(properties.getProperty("image_input_types").split(","));
 	}
-	public List<String> getImageKeywordContainers() {
-		return Arrays.asList(properties.getProperty("image_keyword_container_elements").split(","));
-	}
-	public List<String> getImageKeywordExclussions() {
-		return Arrays.asList(properties.getProperty("image_keywords_excluded_words").split(","));
-	}
+
+
 	public String getVideoInputTypesString() {
 		return properties.getProperty("video_input_types");
 	}
@@ -78,23 +105,23 @@ public class FrameworkProperties {
 	public int getThumbWidth() {
 		return Integer.parseInt(properties.getProperty("image_thumb_width"));
 	}
-	public int getImageSmallHeight() {
-		return Integer.parseInt(properties.getProperty("image_small_height"));
+	public String getImageSmallHeight() {
+		return properties.getProperty("image_small_height");
 	}
-	public int getImageSmallWidth() {
-		return Integer.parseInt(properties.getProperty("image_small_width"));
+	public String getImageSmallWidth() {
+		return properties.getProperty("image_small_width");
 	}
-	public int getImageMedHeight() {
-		return Integer.parseInt(properties.getProperty("image_med_height"));
+	public String getImageMedHeight() {
+		return properties.getProperty("image_med_height");
 	}
-	public int getImageMedWidth() {
-		return Integer.parseInt(properties.getProperty("image_med_width"));
+	public String getImageMedWidth() {
+		return properties.getProperty("image_med_width");
 	}
-	public int getImageLargeHeight() {
-		return Integer.parseInt(properties.getProperty("image_large_height"));
+	public String getImageLargeHeight() {
+		return properties.getProperty("image_large_height");
 	}
-	public int getImageLargeWidth() {
-		return Integer.parseInt(properties.getProperty("image_large_width"));
+	public String getImageLargeWidth() {
+		return properties.getProperty("image_large_width");
 	}
 	public String getVideoSmallHeight() {
 		return properties.getProperty("video_small_height");
@@ -139,6 +166,22 @@ public class FrameworkProperties {
 		return properties.getProperty("salt");
 	}
 	
+	public String getHashMismatchWarningVideo(){
+		return properties.getProperty("video_hash_mismatch_warning");
+	}public String getHashMismatchWarning(){
+		return properties.getProperty("audio_hash_mismatch_warning");
+	}public String getHashMismatchWArningImage(){
+		return properties.getProperty("image_hash_mismatch_warning");
+	}
+
+	public String getVideoHashPath(){
+		return properties.getProperty("video_hash_path");
+	}public String getAudioHashPath(){
+		return properties.getProperty("audio_hash_path");
+	}public String getImageHashPath(){
+		return properties.getProperty("image_hash_path");
+	}
+	
 	protected FrameworkProperties() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -159,6 +202,39 @@ public class FrameworkProperties {
 	   	  instance.setProperties(_properties);
 	   }
 	   return instance;
+	}
+	
+	/* Util methods that only apply to the properties of the framework
+	 * 
+	 */
+	public static void processError(String message, Throwable cause )throws Exception{
+		if (FrameworkProperties.getInstance().getVerbose()) {
+			System.err.println(message + "\n cause: " );
+			cause.printStackTrace(System.err);
+		}
+		if (!FrameworkProperties.getInstance().getLenient()){
+			throw new Exception(message, cause);
+		}
+	}
+	
+	/**
+	 * 
+	 * @param expression has to be in the format <multiplier>;<addition>
+	 * @param originalValue
+	 * @return
+	 */
+	public static int evaluateDemension(String expression, int originalValue){
+		String[] vals = expression.split(";");
+		Integer i = new Integer(originalValue);
+		Double temp = new Double(i.doubleValue());
+		//was that dumb? it felt dumb
+		if (vals[0] != null) {
+			temp = originalValue * Double.parseDouble(vals[0]);
+		}
+		if (vals[1] != null) {
+			temp +=  Double.parseDouble(vals[1]);
+		}
+		return temp.intValue();
 	}
 	
 }

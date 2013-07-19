@@ -11,28 +11,13 @@ import framework.FrameworkProperties;
 import framework.ImageProcessor;
 
 public class ImageProcessorTest {
-	
-
-	@Test
-	public void parseKeyWordsTest() throws Exception {
-		FrameworkProperties config = FrameworkProperties.getInstance();
-		ImageProcessor imageProcessor = new ImageProcessor(new File(config.getTestImage()), new File(config.getOutputFolder()));
-		File metadata = new File(config.getTestJ3M());
-		File outFile = new File(config.getOutputFolder()+ "testKeywords.json");
-		long timestamp = System.currentTimeMillis();
-		imageProcessor.parseKeyWords(metadata, outFile);
-		if (!outFile.exists()){
-		    Assert.fail("Extracted key words file " + outFile.getPath() + " does not exist");
-		}
-		Assert.assertTrue("keyword file timestamp doesnt reflect operation", timestamp < outFile.lastModified());
-
-	}
+	FrameworkProperties config = FrameworkProperties.getInstance();
+	TestProperties testConfig = TestProperties.getInstance();
 
 	@Test
 	public void createThumbnailTest() throws Exception {
-		FrameworkProperties config = FrameworkProperties.getInstance();
-		ImageProcessor imageProcessor = new ImageProcessor(new File(config.getTestImage()), new File(config.getOutputFolder()));
-		String outFile = config.getOutputFolder()+ "thumb_" + Util.getBaseFileName(config.getTestImage()) + "." + config.getThumbFileExt();
+		ImageProcessor imageProcessor = new ImageProcessor(new File(testConfig.getTestImage()), new File(testConfig.getOutputFolder()));
+		String outFile = testConfig.getOutputFolder()+ "thumb_" + Util.getBaseFileName(testConfig.getTestImage()) + "." + config.getThumbFileExt();
 		long timestamp = System.currentTimeMillis();
 		imageProcessor.createThumbnail();
 		File outputFile = new File(outFile);
@@ -44,9 +29,8 @@ public class ImageProcessorTest {
 	
 	@Test
 	public void toLowResolutionTest() throws Exception {
-		FrameworkProperties config = FrameworkProperties.getInstance();
-		ImageProcessor imageProcessor = new ImageProcessor(new File(config.getTestImage()), new File(config.getOutputFolder()));
-		String outFile = config.getOutputFolder()+ "low_" + Util.getBaseFileName(config.getTestImage()) + "." + config.getThumbFileExt();
+		ImageProcessor imageProcessor = new ImageProcessor(new File(testConfig.getTestImage()), new File(testConfig.getOutputFolder()));
+		String outFile = testConfig.getOutputFolder()+ "low_" + Util.getBaseFileName(testConfig.getTestImage()) + "." + config.getThumbFileExt();
 		long timestamp = System.currentTimeMillis();
 		imageProcessor.toLowResolution(false);
 		File outputFile = new File(outFile);
@@ -58,9 +42,8 @@ public class ImageProcessorTest {
 	
 	@Test
 	public void toMediumResolutionTest() throws Exception {
-		FrameworkProperties config = FrameworkProperties.getInstance();
-		ImageProcessor imageProcessor = new ImageProcessor(new File(config.getTestImage()), new File(config.getOutputFolder()));
-		String outFile = config.getOutputFolder()+ "med_" + Util.getBaseFileName(config.getTestImage()) + "." + config.getThumbFileExt();
+		ImageProcessor imageProcessor = new ImageProcessor(new File(testConfig.getTestImage()), new File(testConfig.getOutputFolder()));
+		String outFile = testConfig.getOutputFolder()+ "med_" + Util.getBaseFileName(testConfig.getTestImage()) + "." + config.getThumbFileExt();
 		long timestamp = System.currentTimeMillis();
 		imageProcessor.toMediumResolution(false);
 		File outputFile = new File(outFile);
@@ -72,9 +55,8 @@ public class ImageProcessorTest {
 	
 	@Test
 	public void toHighResolutionTest() throws Exception {
-		FrameworkProperties config = FrameworkProperties.getInstance();
-		ImageProcessor imageProcessor = new ImageProcessor(new File(config.getTestImage()), new File(config.getOutputFolder()));
-		String outFile = config.getOutputFolder()+ "high_" + Util.getBaseFileName(config.getTestImage()) + "." + config.getThumbFileExt();
+		ImageProcessor imageProcessor = new ImageProcessor(new File(testConfig.getTestImage()), new File(testConfig.getOutputFolder()));
+		String outFile = testConfig.getOutputFolder()+ "high_" + Util.getBaseFileName(testConfig.getTestImage()) + "." + config.getThumbFileExt();
 		long timestamp = System.currentTimeMillis();
 		imageProcessor.toHighResolution(false);
 		File outputFile = new File(outFile);
@@ -86,9 +68,8 @@ public class ImageProcessorTest {
 	
 	@Test
 	public void toOriginalResolutionTest() throws Exception {
-		FrameworkProperties config = FrameworkProperties.getInstance();
-		ImageProcessor imageProcessor = new ImageProcessor(new File(config.getTestImage()), new File(config.getOutputFolder()));
-		String outFile = config.getOutputFolder()+ Util.getBaseFileName(config.getTestImage()) + "." + config.getThumbFileExt();
+		ImageProcessor imageProcessor = new ImageProcessor(new File(testConfig.getTestImage()), new File(testConfig.getOutputFolder()));
+		String outFile = testConfig.getOutputFolder()+ Util.getBaseFileName(testConfig.getTestImage()) + "." + config.getThumbFileExt();
 		long timestamp = System.currentTimeMillis();
 		imageProcessor.toOriginalResolution(true);
 		File outputFile = new File(outFile);

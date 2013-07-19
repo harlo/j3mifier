@@ -10,6 +10,10 @@ import framework.FrameworkProperties;
 import framework.MediaProcessor;
 
 public class MediaProcessorTests {
+	
+	FrameworkProperties config = FrameworkProperties.getInstance();
+	TestProperties testConfig = TestProperties.getInstance();
+	
 	@Test
 	public void processInputNoArgsTest() throws Exception {
 		MediaProcessor processor = new MediaProcessor();
@@ -62,8 +66,7 @@ public class MediaProcessorTests {
 	@Test
 	public void processInputNoFileTest() throws Exception {
 		MediaProcessor processor = new MediaProcessor();
-        FrameworkProperties config = FrameworkProperties.getInstance();
-		String[] args = {"something", config.getOutputFolder()};
+        String[] args = {"something", testConfig.getOutputFolder()};
 		try {
 			processor.processInput(args);
 		}catch (Exception e) {
@@ -75,8 +78,7 @@ public class MediaProcessorTests {
 	@Test
 	public void processInputNoFolderTest() throws Exception {
 		MediaProcessor processor = new MediaProcessor();
-        FrameworkProperties config = FrameworkProperties.getInstance();
-		String[] args = {config.getTestImage(), "stuff"};
+        String[] args = {testConfig.getTestImage(), "stuff"};
 		try {
 			processor.processInput(args);
 		}catch (Exception e) {
@@ -88,9 +90,8 @@ public class MediaProcessorTests {
 	@Test
 	public void processInputWrongFileTypeTest() throws Exception {
 		MediaProcessor processor = new MediaProcessor();
-        FrameworkProperties config = FrameworkProperties.getInstance();
         File file = File.createTempFile("name", ".blah");
-		String[] args = {file.getAbsolutePath(), config.getOutputFolder()};
+		String[] args = {file.getAbsolutePath(), testConfig.getOutputFolder()};
 		try {
 			processor.processInput(args);
 		}catch (Exception e) {
@@ -102,13 +103,23 @@ public class MediaProcessorTests {
 	@Test
 	public void processInputTest() throws Exception {
 		MediaProcessor processor = new MediaProcessor();
-        FrameworkProperties config = FrameworkProperties.getInstance();
-		String[] args = {config.getTestImage(), config.getOutputFolder()};
+        String[] args = {testConfig.getTestImage(), testConfig.getOutputFolder()};
 		try {
 			processor.processInput(args);
 		}catch (Exception e) {
 			Assert.fail("Failed on correct input");
 		}
 		
+	}
+	
+	@Test
+	public void optionalParamatersTest() throws Exception {
+		MediaProcessor processor = new MediaProcessor();
+        String[] args = {testConfig.getTestImage(), testConfig.getOutputFolder(), "-l", "-v", "hbdsvhb"};
+		try {
+			processor.processInput(args);
+		}catch (Exception e) {
+			Assert.fail("Failed on correct input");
+		}
 	}
 }

@@ -20,6 +20,8 @@ public class JSONTreeSearcher {
 	private String[] path;
 	private List<String> results;
 	private List<JSONBranch> queue;
+	private boolean strict = false;
+	JsonElement endElement;
 
 	public JSONTreeSearcher(File json, String[] path) {
 		super();
@@ -27,6 +29,15 @@ public class JSONTreeSearcher {
 		this.path = path;
 		results = new ArrayList<String>();
 		queue = new ArrayList<JSONBranch>();
+	}
+	
+	public JSONTreeSearcher(File json, String[] path, boolean strict_) {
+		super();
+		this.json = json;
+		this.path = path;
+		results = new ArrayList<String>();
+		queue = new ArrayList<JSONBranch>();
+		strict = strict_;
 	}
 	
 	public List<String> performSearch () throws IOException{
@@ -45,7 +56,7 @@ public class JSONTreeSearcher {
 			String[] currentPath = branch.getPath();
 			boolean keepLooking = true;
 			int i = 0;
-			for (i = 0; i < currentPath.length && keepLooking; i++) {
+			for (i = 0; i < currentPath.length && keepLooking && element != null; i++) {
 				if (element.isJsonObject()){
 					element = element.getAsJsonObject().get(currentPath[i]);
 				}else if(element.isJsonArray()){
@@ -64,11 +75,20 @@ public class JSONTreeSearcher {
 			}
 			if (i == currentPath.length && keepLooking){
 				if (null != element){
-					extractEndStrings(element);
+					if (strict) {
+						//no going further down the tree - return the whole thing
+						endElement = element;
+					}else {
+						extractEndStrings(element);
+					}
 				}
 			}
 		}
 		
+	}
+	
+	public JsonElement getEndElement() {
+		return endElement;
 	}
 	
 	private void extractEndStrings(JsonElement element) {
@@ -104,5 +124,17 @@ public class JSONTreeSearcher {
 		}
 		
 	}
+	
+	 public static boolean isJSON(File testFile) {
+         JsonParser parser = new JsonParser();
+         try {
+                 JsonElement metadata = parser.parse(new FileReader(testFile));
+                 metadata.isJsonArray();
+                 return true;
+         } catch (Exception e) {
+                 return false;
+         }
+	 }
+
 	
 }

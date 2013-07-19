@@ -15,17 +15,24 @@ public class VideoProcessor extends FileProcessor{
 	public VideoProcessor(File sourceFile, File outputFolder) {
 		super(sourceFile, outputFolder);
 	}
-	public void extractMetadata() throws FfmpegException{
+	public void processMetadata() throws FfmpegException, Exception{
 		File outFile = new File(getOutputFolder(),
 						getSourceFileName() + "." + 
 						FrameworkProperties.getInstance().getVideoMetadataFileExt());
 		FfmpegWrapper ffmpeg = new FfmpegWrapper();
 		ffmpeg.extractMetadata(getSourceFile(), outFile);
 		
+		J3mMetadataProcessor metadataProcessor = new J3mMetadataProcessor(outFile,getOutputFolder());
+		metadataProcessor.processMetadata();
+		
+		//
+		
 	}
+	
+	
 	public void createStillAndThumbnail() throws FfmpegException, Exception{
 		File stillFile = new File(getOutputFolder(),
-		Util.getBaseFileName(getSourceFile().getName()) + "." + 
+		Util.getBaseFileName(getSourceFile()) + "." + 
 		FrameworkProperties.getInstance().getVideoStillFileExt());
 		FfmpegWrapper ffmpeg = new FfmpegWrapper();
 		try {
@@ -48,7 +55,7 @@ public class VideoProcessor extends FileProcessor{
 	public void toLowResolution(boolean updateSource)throws Exception{
 		File outFile = new File (getOutputFolder(),
 		"low_" + getSourceFileName() + "." + 
-		Util.getFileExtenssion(getSourceFile().getName()));
+		Util.getFileExtenssion(getSourceFile()));
 		try {
 			FfmpegWrapper ffmpeg = new FfmpegWrapper();
 			ffmpeg.changeResolution(getSourceFile(), outFile, 
@@ -67,7 +74,7 @@ public class VideoProcessor extends FileProcessor{
 	public void toMediumResolution(boolean updateSource)throws Exception{
 		File outFile = new File(getOutputFolder(),
 		"med_" + getSourceFileName() + "." +
-		Util.getFileExtenssion(getSourceFile().getName()));
+		Util.getFileExtenssion(getSourceFile()));
 		try {
 			FfmpegWrapper ffmpeg = new FfmpegWrapper();
 			ffmpeg.changeResolution(getSourceFile(), outFile, 
@@ -86,7 +93,7 @@ public class VideoProcessor extends FileProcessor{
 	public void toHighResolution(boolean updateSource) throws Exception{
 		File outFile = new File(getOutputFolder().getAbsolutePath() ,
 		"high_" + getSourceFileName() + "." + 
-		Util.getFileExtenssion(getSourceFile().getName()));
+		Util.getFileExtenssion(getSourceFile()));
 		try {
 			FfmpegWrapper ffmpeg = new FfmpegWrapper();
 			ffmpeg.changeResolution(getSourceFile(), outFile, 

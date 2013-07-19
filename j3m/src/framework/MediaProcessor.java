@@ -45,11 +45,34 @@ public class MediaProcessor {
 			throw new Exception("Destination '" + destinationFolder  + "' is not a directory");
 		}
 		
+		//process optional parameters, if they are unknown, just ignore them
+		int varCount = 2;
+		boolean keepLooking = true;
+		while(keepLooking) {
+			if (args.length > varCount){
+				String optionalPramater = args[varCount];
+				if ("-v".equals(optionalPramater)) {
+					FrameworkProperties.getInstance().setVerbose(true);
+					System.out.println("verbose mode switched on");
+				}else if ("-l".equals(optionalPramater)) {
+					FrameworkProperties.getInstance().setLenient(true);
+					System.out.println("lenient mode switched on");
+				}else {
+					System.out.println("Unknown paramter " + optionalPramater);
+					System.out.println("Supported optional paramters are -v and -l");
+				}
+				varCount++;
+			}else {
+				keepLooking = false;
+			}
+		}
+		
+		
 		//figure out what it is and do the actual work
 		FrameworkProperties config = FrameworkProperties.getInstance();
 		String fileType;
 		try {
-			fileType = Util.getFileExtenssion(sourceFile).toLowerCase();
+			fileType = Util.getFileExtenssion(source).toLowerCase();
 		} catch (Exception e) {
 			throw new Exception("Source '" + sourceFile  + "' is not in one of accepted formats : " + config.getImageInputTypesString() + " or " + config.getVideoInputTypesString(), e );
 		}
@@ -66,7 +89,11 @@ public class MediaProcessor {
 	private void processVideo(File sourceFile, File outputFolder) throws Exception {
 		VideoProcessor video = new VideoProcessor(sourceFile, outputFolder);
 		try {
-			video.extractMetadata();
+			try {
+				video.processMetadata();
+			} catch (Exception e) {
+				FrameworkProperties.processError("Could not process metadata", e);
+			}
 			video.toOriginalResolution(true);
 			video.createStillAndThumbnail();
 			
@@ -82,7 +109,11 @@ public class MediaProcessor {
 	private void processImage(File sourceFile, File outputFolder) throws Exception{
 		ImageProcessor image = new ImageProcessor(sourceFile, outputFolder);
 		try {
-			image.extractMetadataAndKeywords();
+			try {
+				image.processMetadata();
+			} catch (Exception e) {
+				FrameworkProperties.processError("Could not process metadata", e);
+			}
 			image.toOriginalResolution(true);
 			image.createThumbnail();
 			

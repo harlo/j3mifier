@@ -13,7 +13,7 @@ public abstract class FileProcessor {
 		super();
 		this.sourceFile = sourceFile;
 		this.outputFolder = outputFolder;
-		sourceFileName = Util.getBaseFileName(sourceFile.getName());
+		sourceFileName = Util.getBaseFileName(sourceFile);
 	}
 	
 	protected FileProcessor() {

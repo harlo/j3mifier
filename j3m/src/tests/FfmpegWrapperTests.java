@@ -18,9 +18,10 @@ public class FfmpegWrapperTests {
 	public void extractMetadataTest () throws Exception {
 		FfmpegWrapper wrapper = new FfmpegWrapper();
 		FrameworkProperties config = FrameworkProperties.getInstance();
+		TestProperties testConfig = TestProperties.getInstance();
 		
-		File inFile = new File(config.getTestVideo());
-		String outputFile = config.getOutputFolder() + Util.getBaseFileName(inFile.getName()) + "." + config.getVideoMetadataFileExt();
+		File inFile = new File(testConfig.getTestVideo());
+		String outputFile = testConfig.getOutputFolder() + Util.getBaseFileName(inFile) + "." + config.getVideoMetadataFileExt();
 		long timestamp = System.currentTimeMillis();
 		File output = new File(outputFile);
 		wrapper.extractMetadata(inFile, output);
@@ -33,7 +34,7 @@ public class FfmpegWrapperTests {
 	@Test
 	public void convertToOgvTest () throws Exception {
 		FfmpegWrapper wrapper = new FfmpegWrapper();
-		FrameworkProperties config = FrameworkProperties.getInstance();
+		TestProperties config = TestProperties.getInstance();
 		
 		File inFile = new File(config.getTestVideo());
 		try {
@@ -48,7 +49,7 @@ public class FfmpegWrapperTests {
 	@Test
 	public void getRgbMd5Test() throws Exception {
 		FfmpegWrapper wrapper = new FfmpegWrapper();
-		FrameworkProperties config = FrameworkProperties.getInstance();
+		TestProperties config = TestProperties.getInstance();
 		File inFile = new File(config.getTestVideo());
 		String firstHash = wrapper.getVideoRgbMd5(inFile);
 		String secondHash = wrapper.getVideoRgbMd5(inFile);
@@ -59,7 +60,7 @@ public class FfmpegWrapperTests {
 	@Test
 	public void getAudioMd5Test() throws Exception {
 		FfmpegWrapper wrapper = new FfmpegWrapper();
-		FrameworkProperties config = FrameworkProperties.getInstance();
+		TestProperties config = TestProperties.getInstance();
 		File inFile = new File(config.getTestVideo());
 		String firstHash = wrapper.getAudioMd5(inFile);
 		String secondHash = wrapper.getAudioMd5(inFile);
