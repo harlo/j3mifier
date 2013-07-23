@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
+
 import util.JSONTreeSearcher;
 import util.Util;
 
@@ -20,27 +22,36 @@ import com.google.gson.stream.JsonWriter;
 public class J3mMetadataProcessor extends FileProcessor{
 	
 	private List<File> fileTrail;
-	private String uniquePrefix;
 
 	public J3mMetadataProcessor(File sourceFile, File outputFolder) {
 		super(sourceFile, outputFolder);
 		fileTrail = new ArrayList<File>();
-		uniquePrefix = String.valueOf(System.currentTimeMillis());
 	}
 
 	public void processMetadata() throws Exception{
 		if (!JSONTreeSearcher.isJSON(getSourceFile())) {
+			FrameworkProperties.processMessage("Starting JSONafication");
 			toJSON();
 		}
 		File sig = extractSignature();
 		if (sig != null) {
+			FrameworkProperties.processMessage("Found signature file");
 			try {
-				verifySignature();
+				verifySignature(sig);
 			}catch (Exception e) {
 				FrameworkProperties.processError("Failed to verify signature for file " + getSourceFile(), e);
 			}
 
 		}
+		File j3m = new File (getSourceFile().getParent(),  Util.getBaseFileName(getSourceFile()) + ".json");
+		FileUtils.copyFile(getSourceFile(),j3m);
+		fileTrail.add(getSourceFile());
+		if (!FrameworkProperties.getInstance().getDebug()){
+			for (File f : fileTrail){
+				f.delete();
+			}
+		}
+		setSourceFile(j3m);
 		try {
 			parseKeyWords();
 		}catch (Exception e) {
@@ -58,7 +69,7 @@ public class J3mMetadataProcessor extends FileProcessor{
 	 */
 	public void toJSON() throws Exception{
 		//decode
-		File result = new File (getSourceFile().getParent(), uniquePrefix +  getSourceFile().getName() + ".from64");
+		File result = new File (getSourceFile().getParent(),  getSourceFile().getName() + ".from64");
 		fileTrail.add(result);
 		try {
 			Util.decodeBase64File(getSourceFile(), result);
@@ -70,7 +81,7 @@ public class J3mMetadataProcessor extends FileProcessor{
 		BufferedReader reader = new BufferedReader(new FileReader(result));
 		if (reader.readLine().contains("BEGIN PGP MESSAGE")){
 			File encrypted = result;
-			result = new File (getSourceFile().getParent(), uniquePrefix +  getSourceFile().getName() + ".decrypted");
+			result = new File (getSourceFile().getParent(),  getSourceFile().getName() + ".decrypted");
 			fileTrail.add(result);
 			try {
 				gpgDecrypt(encrypted, result );
@@ -80,15 +91,14 @@ public class J3mMetadataProcessor extends FileProcessor{
 		}
 		
 		//unzip
+		File zipped = result;
 		try {
-			File zipped = result;
-			result = new File (getSourceFile().getParent(), uniquePrefix +  getSourceFile().getName() + ".unzipped");
+			result = new File (getSourceFile().getParent(),  getSourceFile().getName() + ".unzipped");
 			fileTrail.add(result);
 			Util.unGzip(zipped, result);
 			setSourceFile(result);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			FrameworkProperties.processError("Failed to ungzip file " + result, e);
+		} catch (Exception e) {		
+			FrameworkProperties.processError("Failed to ungzip file " + zipped, e);
 		}
 	}
 	
@@ -106,9 +116,8 @@ public class J3mMetadataProcessor extends FileProcessor{
 	 * @throws IOException 
 	 * @throws GPGException 
 	 */
-	public void verifySignature() throws GPGException, IOException{
-		File sigFile = extractSignature();
-	 	GPGWrapper gpgWrapper = new GPGWrapper();
+	public void verifySignature(File sigFile) throws GPGException, IOException{
+		GPGWrapper gpgWrapper = new GPGWrapper();
 
 		if (!gpgWrapper.verifySignature(getSourceFile(), sigFile)) {
 			throw new GPGException("Could not verify signature " + sigFile.getName() + " for file " + getSourceFile().getName());
@@ -128,6 +137,7 @@ public class J3mMetadataProcessor extends FileProcessor{
 		File sigFile = null;
 		
 		JSONTreeSearcher jsonSearcher = new JSONTreeSearcher(getSourceFile(), FrameworkProperties.getInstance().getSignatureContainer().split("\\."), true);
+		jsonSearcher.performSearch();
 		if (jsonSearcher.getEndElement()!= null) {
 			// ok, we got a signature
 			sigFile = new File (getSourceFile().getParent(), getSourceFile().getName() + ".sig");

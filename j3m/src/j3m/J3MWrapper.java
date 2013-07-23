@@ -44,7 +44,7 @@ public class J3MWrapper {
 		boolean skipping = true;
 		while (skipping) {
 			line = reader.readLine();
-			System.out.println(line);
+			FrameworkProperties.processMessage(line);
 			skipping = false;
 			for(String l: ignoreLines){
 				if(line.matches(l)){
@@ -61,5 +61,8 @@ public class J3MWrapper {
 		}
 		writer.close();
 		FileUtils.copyFile(temp,inputFile);
+		if (!FrameworkProperties.getInstance().getDebug()){
+			temp.delete();
+		}
 	}
 }

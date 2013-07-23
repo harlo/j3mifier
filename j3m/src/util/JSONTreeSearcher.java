@@ -14,6 +14,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import framework.FrameworkProperties;
+
 public class JSONTreeSearcher {
 	
 	private File json;
@@ -129,8 +131,11 @@ public class JSONTreeSearcher {
          JsonParser parser = new JsonParser();
          try {
                  JsonElement metadata = parser.parse(new FileReader(testFile));
-                 metadata.isJsonArray();
-                 return true;
+                 if (metadata.isJsonArray() || metadata.isJsonObject()){
+	                 FrameworkProperties.processMessage("File " + testFile.getName() + " is in JSON format");
+	                 return true;
+                 }
+                 return false;
          } catch (Exception e) {
                  return false;
          }

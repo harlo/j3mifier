@@ -27,7 +27,12 @@ public class FrameworkProperties {
 	public void setVerbose(boolean setting) {
 		properties.setProperty("framework_verbose",String.valueOf(setting));
 	}
-	
+	public boolean getDebug() {
+		return Boolean.valueOf(properties.getProperty("framework_debug"));
+	}
+	public void setDebug(boolean setting) {
+		properties.setProperty("framework_debug",String.valueOf(setting));
+	}
 	public List<String> getKeywordContainers() {
 		return Arrays.asList(properties.getProperty("keyword_container_elements").split(","));
 	}
@@ -214,6 +219,11 @@ public class FrameworkProperties {
 		}
 		if (!FrameworkProperties.getInstance().getLenient()){
 			throw new Exception(message, cause);
+		}
+	}
+	public static void processMessage(String message) {
+		if (FrameworkProperties.getInstance().getVerbose()) {
+			System.out.println(message);
 		}
 	}
 	

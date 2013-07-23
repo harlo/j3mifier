@@ -2,6 +2,7 @@ package framework;
 
 import java.io.File;
 
+
 import util.Util;
 
 
@@ -48,6 +49,7 @@ public class MediaProcessor {
 		//process optional parameters, if they are unknown, just ignore them
 		int varCount = 2;
 		boolean keepLooking = true;
+		boolean metadataOnly = false;
 		while(keepLooking) {
 			if (args.length > varCount){
 				String optionalPramater = args[varCount];
@@ -57,6 +59,12 @@ public class MediaProcessor {
 				}else if ("-l".equals(optionalPramater)) {
 					FrameworkProperties.getInstance().setLenient(true);
 					System.out.println("lenient mode switched on");
+				}else if ("-m".equals(optionalPramater)) {
+					System.out.println("treating input file as metadata only");
+					metadataOnly = true;
+				}else if ("-d".equals(optionalPramater)) {
+					System.out.println("debug mode switched on");
+					FrameworkProperties.getInstance().setDebug(true);
 				}else {
 					System.out.println("Unknown paramter " + optionalPramater);
 					System.out.println("Supported optional paramters are -v and -l");
@@ -80,6 +88,9 @@ public class MediaProcessor {
 			processImage(source,destination);
 		}else if (config.getVideoInputTypes().contains(fileType)) {
 			processVideo(source,destination);
+		}else if (metadataOnly){
+			J3mMetadataProcessor metadataProcessor = new J3mMetadataProcessor(source,destination);
+			metadataProcessor.processMetadata();
 		}else {
 			throw new Exception("Source '" + sourceFile  + "' is not in one of accepted formats : " + config.getImageInputTypesString() + " or " + config.getVideoInputTypesString() );
 		}

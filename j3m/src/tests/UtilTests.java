@@ -7,6 +7,8 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.OutputStreamWriter;
 import java.util.zip.GZIPOutputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import junit.framework.Assert;
 
@@ -74,6 +76,25 @@ public class UtilTests {
 		BufferedReader reader = new BufferedReader(new FileReader(testOut));
 		Assert.assertEquals("Unzipped file contents doesnt match input", testString, reader.readLine());
 	}
+	
+	@Test 
+	public void unZipTest()throws Exception {
+		File test = File.createTempFile(String.valueOf(System.currentTimeMillis()), ".zip");
+		ZipOutputStream zip = new ZipOutputStream(new FileOutputStream(test));
+		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(zip, "UTF-8"));
+		String testString = "This will be zipped up, tralalalalala";
+		
+		zip.putNextEntry(new ZipEntry(test.getName()));
+		writer.write(testString);
+		zip.closeEntry();
+		writer.close();
+		
+		File testOut = File.createTempFile(String.valueOf(System.currentTimeMillis()), ".test");
+		Util.unGzip(test, testOut);
+		BufferedReader reader = new BufferedReader(new FileReader(testOut));
+		Assert.assertEquals("Unzipped file contents doesnt match input", testString, reader.readLine());
+	}
+	
 	
 	@Test
 	public void decodeBase64FileTest() throws Exception {

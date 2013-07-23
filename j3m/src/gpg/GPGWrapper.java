@@ -1,7 +1,9 @@
 package gpg;
 
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +40,9 @@ public class GPGWrapper {
 		try {
 			StreamToStdOut streamProcessor = new StreamToStdOut();
 			CommandRunner commandRunner = new CommandRunner();
-            commandRunner.runCommand(command, streamProcessor, config.getGpgPassword());
+			File password = new File(config.getGpgPassword());
+			BufferedReader reader = new BufferedReader(new FileReader(password));
+            commandRunner.runCommand(command, streamProcessor,reader.readLine());
 				
 		} catch (Exception e) {
 			throw new GPGException("Could not run command: " + command, e);

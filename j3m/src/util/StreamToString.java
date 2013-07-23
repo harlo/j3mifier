@@ -19,7 +19,12 @@ public class StreamToString extends StreamTo {
     	if (pattern != null) {
         	Scanner scanner = new Scanner(stream).useDelimiter(pattern);
         	scanner.findWithinHorizon(pattern, 0);
-        	result = scanner.match().group(2);
+        	try {
+				result = scanner.match().group(2);
+			} catch (IllegalStateException e) {
+				//no match found
+				result = null;
+			}
     	}else {
     		BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
     		try {

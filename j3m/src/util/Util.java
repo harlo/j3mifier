@@ -1,6 +1,7 @@
 package util;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -11,6 +12,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import javax.imageio.ImageIO;
 
@@ -88,6 +91,39 @@ public class Util {
 		  gin.close();
 		  fos.close();
 	}
+	
+	public static void unZip(File sourceFile, File destinationFile){
+        
+        FileInputStream fis = null;
+        ZipInputStream zipIs = null;
+        ZipEntry zEntry = null;
+        try {
+            fis = new FileInputStream(sourceFile);
+            zipIs = new ZipInputStream(new BufferedInputStream(fis));
+            while((zEntry = zipIs.getNextEntry()) != null){
+                try{
+                    byte[] tmp = new byte[4*1024];
+                    FileOutputStream fos = null;
+                    fos = new FileOutputStream(destinationFile);
+                    int size = 0;
+                    while((size = zipIs.read(tmp)) != -1){
+                        fos.write(tmp, 0 , size);
+                    }
+                    fos.flush();
+                    fos.close();
+                } catch(Exception ex){
+                     
+                }
+            }
+            zipIs.close();
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
 
 	public static String saltAndHash(String data, String salt) throws NoSuchAlgorithmException{
 		String payload = data + salt;
