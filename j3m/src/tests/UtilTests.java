@@ -1,18 +1,24 @@
 package tests;
 
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.OutputStreamWriter;
+import java.security.MessageDigest;
 import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import javax.imageio.ImageIO;
+
 import junit.framework.Assert;
 
 import org.apache.commons.codec.binary.Base64OutputStream;
+import org.apache.commons.codec.binary.Hex;
 import org.junit.Test;
 
 import util.Util;
@@ -109,5 +115,20 @@ public class UtilTests {
 		Util.decodeBase64File(test, testOut);
 		BufferedReader reader = new BufferedReader(new FileReader(testOut));
 		Assert.assertEquals("Base64 decoded file contents doesnt match input", testString, reader.readLine());
+	}
+	
+	@Test
+	public void getImageHashTest() throws Exception {
+		File test = new File (testConfig.getImageToHash());
+		String hashResult = Util.getImageHash(test,"MD5");
+		
+		BufferedImage bufferedImage = ImageIO.read(test);
+		byte[] pixels = ((DataBufferByte) bufferedImage.getRaster().getDataBuffer()).getData();
+		MessageDigest digester = MessageDigest.getInstance("MD5");
+		digester.update(pixels);
+		byte[] messageDigest = digester.digest();
+		String hash2 = Hex.encodeHexString(messageDigest);
+		
+		Assert.assertEquals("Hash result does not match", hashResult, testConfig.getImageHash());
 	}
 }

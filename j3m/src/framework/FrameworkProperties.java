@@ -45,6 +45,15 @@ public class FrameworkProperties {
 	public String getJ3mContainer() {
 		return properties.getProperty("j3m_body");
 	}
+	public String getAudioContainer() {
+		return properties.getProperty("audio_file");
+	}
+	public String getAudioRawFormat() {
+		return properties.getProperty("audio_raw_format");
+	}
+	public String getAudioTargetFormat() {
+		return properties.getProperty("audio_target_format");
+	}
 	
 	public String getGpgVerifySignature() {
 		return properties.getProperty("gpg_verify_signature");
@@ -167,6 +176,11 @@ public class FrameworkProperties {
 	public String getffmpegAudioMd5() {
 		return properties.getProperty("ffmpeg_audio_md5");
 	}
+	public String getffmpegAudioConvert() {
+		return properties.getProperty("ffmpeg_audio_convert");
+	}
+	
+	
 	public String getSalt(){
 		return properties.getProperty("salt");
 	}

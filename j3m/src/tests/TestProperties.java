@@ -40,7 +40,19 @@ public class TestProperties {
 	public String getEncryptedJ3M() {
 		return properties.getProperty("test_encoded_j3m");
 	}
+	public String getAudioJ3M() {
+		return properties.getProperty("test_audio_j3m");
+	}
 	
+	public String getImageToHash() {
+		return properties.getProperty("test_image_to_hash");
+	}
+	public String getImageHash() {
+		return properties.getProperty("test_image_hash");
+	}
+	public String getImageHashJ3M() {
+		return properties.getProperty("test_image_hash_j3m");
+	}
 	
 	public static TestProperties getInstance() {
 		   if(instance == null) {

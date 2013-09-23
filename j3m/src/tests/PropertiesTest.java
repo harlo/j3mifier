@@ -54,6 +54,7 @@ public class PropertiesTest {
 		
 		Assert.assertNotNull("No j3m container", config.getJ3mContainer());
 		Assert.assertNotNull("No signature container", config.getSignatureContainer());
+		Assert.assertNotNull("No audio container", config.getAudioContainer());
 		
 		Assert.assertNotNull("No gpg_verify_signature", config.getGpgVerifySignature());
 		Assert.assertNotNull("No gpg_signature_verified", config.getGpgSignatureOK());
@@ -66,10 +67,16 @@ public class PropertiesTest {
 		Assert.assertNotNull("No video still file type", config.getVideoStillFileExt());
 		Assert.assertNotNull("No video conversion file type", config.getVideoConvertedFormat());
 		
+		Assert.assertNotNull("No audio raw format", config.getAudioRawFormat());
+		Assert.assertNotNull("No audio target format", config.getAudioTargetFormat());
+	
+		
 		Assert.assertNotNull("No ffmpeg@theora command", config.getffmpeg2Theora());
 		Assert.assertNotNull("No ffmpeg_frame_rgb command", config.getffmpegRGB());
 		Assert.assertNotNull("No ffmpeg_video_rgb_md5 command", config.getffmpegVideoRgbMd5());
 		Assert.assertNotNull("No ffmpeg_audio_md5 command", config.getffmpegAudioMd5());
+		Assert.assertNotNull("No ffmpeg_audio_convert command", config.getffmpegAudioConvert());
+		
 		
 		Assert.assertNotNull("No salt command", config.getSalt());
 		Assert.assertNotNull("No video_hash_mismatch_warning command", config.getHashMismatchWarningVideo());

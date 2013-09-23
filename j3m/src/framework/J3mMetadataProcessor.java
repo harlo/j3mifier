@@ -1,5 +1,6 @@
 package framework;
 
+import ffmpeg.FfmpegWrapper;
 import gpg.GPGException;
 import gpg.GPGWrapper;
 
@@ -52,6 +53,11 @@ public class J3mMetadataProcessor extends FileProcessor{
 			}
 		}
 		setSourceFile(j3m);
+		try {
+			extractAudio();
+		}catch (Exception e) {
+			FrameworkProperties.processError("Failed to extract embedded audio " + getSourceFile(), e);
+		}
 		try {
 			parseKeyWords();
 		}catch (Exception e) {
@@ -124,7 +130,60 @@ public class J3mMetadataProcessor extends FileProcessor{
 		}	
 	}
 	
-
+	public File extractAudio() throws Exception {
+		File audioFile = null;
+		JSONTreeSearcher jsonSearcher = new JSONTreeSearcher(getSourceFile(), FrameworkProperties.getInstance().getAudioContainer().split("\\."), true);
+		jsonSearcher.performSearch();
+		if (jsonSearcher.getEndElement()!= null) {
+			// huston, we got audio
+			audioFile = new File (getSourceFile().getParent(), getSourceFile().getName() + ".audio");
+			FileWriter fw = new FileWriter(audioFile);
+			fw.write(jsonSearcher.getEndElement().getAsString());
+			fw.close();
+			fileTrail.add(audioFile);
+			
+			//okie dokes, so we are expecting this file to be gziped, then b64 encoded, so iff we go in reverse weeeeeeeee
+			try {
+				File from64 = new File (getSourceFile().getParent(), getSourceFile().getName() + ".audio.fromb64");
+				Util.decodeBase64File(audioFile, from64);
+				fileTrail.add(from64);
+				audioFile = from64;
+			} catch (Exception e) {
+				FrameworkProperties.processError("Failed to base64 decode file " + getSourceFile(), e);
+			}
+			
+			//unzip
+			try {
+				File unZipped = new File (getSourceFile().getParent(),  Util.getBaseFileName(getSourceFile())  + "." + FrameworkProperties.getInstance().getAudioRawFormat());
+				fileTrail.add(unZipped);
+				Util.unGzip(audioFile, unZipped);
+				audioFile = unZipped;
+			} catch (Exception e) {		
+				FrameworkProperties.processError("Failed to ungzip file " + audioFile, e);
+			}
+			// convert to a nicer format
+			FfmpegWrapper ffmpeg = new FfmpegWrapper();
+			try {
+				File finalForm = new File (getSourceFile().getParent(),  Util.getBaseFileName(getSourceFile()) + "." + FrameworkProperties.getInstance().getAudioTargetFormat());
+				
+				ffmpeg.convertAudio(audioFile, finalForm);
+				
+				//alrighty then, all that said and done - update the JSON with path to file in place of raw data
+				jsonSearcher.performSearchAndReplace(finalForm.getName());
+				
+				fw = new FileWriter(getSourceFile());
+				fw.write(jsonSearcher.getJSON());
+				fw.write("\n");//TODO move to preperties as an option
+				fw.close();
+				
+			} catch (Exception e) {
+				FrameworkProperties.processError("Failed to convert audio file " + audioFile, e);
+			}
+		}
+		return audioFile;
+	}
+	
+	
 	/**
 	 * Looks for a signature block as per the path provided in the propeties,
 	 * if one is present, extracts it into a separate file and removes any charcater encoding

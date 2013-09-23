@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -24,6 +25,8 @@ public class JSONTreeSearcher {
 	private List<JSONBranch> queue;
 	private boolean strict = false;
 	JsonElement endElement;
+	JsonElement parentOfEndElement;
+	JsonElement metadata;
 
 	public JSONTreeSearcher(File json, String[] path) {
 		super();
@@ -44,22 +47,39 @@ public class JSONTreeSearcher {
 	
 	public List<String> performSearch () throws IOException{
 		JsonParser parser = new JsonParser();
-		JsonElement metadata = parser.parse(new FileReader(json));
+		metadata = parser.parse(new FileReader(json));
 		
 		queue.add(new JSONBranch(metadata,path));
 		processQueue();
 		return results;
 	}
 	
+	public void performSearchAndReplace(String replacement) throws IOException {
+		performSearch();
+		String propertyName = path[path.length -1];
+		parentOfEndElement.getAsJsonObject().remove(propertyName);
+		parentOfEndElement.getAsJsonObject().addProperty(propertyName, replacement);
+		
+ 	}
+	
+	public String getJSON () {
+		Gson gson = new Gson(); 
+		return gson.toJson(metadata);
+	}
+	
+	
+	
 	private void processQueue(){
 		while(queue.size() > 0 ){
 			JSONBranch branch = queue.remove(0);
 			JsonElement element = branch.getHead();
 			String[] currentPath = branch.getPath();
+			JsonElement _parentOfEndElement = element;
 			boolean keepLooking = true;
 			int i = 0;
 			for (i = 0; i < currentPath.length && keepLooking && element != null; i++) {
 				if (element.isJsonObject()){
+					_parentOfEndElement = element;
 					element = element.getAsJsonObject().get(currentPath[i]);
 				}else if(element.isJsonArray()){
 					//sigh
@@ -80,6 +100,7 @@ public class JSONTreeSearcher {
 					if (strict) {
 						//no going further down the tree - return the whole thing
 						endElement = element;
+						parentOfEndElement = _parentOfEndElement;
 					}else {
 						extractEndStrings(element);
 					}

@@ -39,6 +39,10 @@ public class FfmpegWrapper {
 		runCommand(inputFile,outputFile,config.getffmpegChangeFormat());
 	}
 
+	public void convertAudio(File inputFile, File outputFile) throws FfmpegException  {
+		FrameworkProperties config = FrameworkProperties.getInstance();
+		runCommand(inputFile,outputFile,config.getffmpegAudioConvert());
+	}
 
 	/**
 	 * Needs to have the input file in mp4 format

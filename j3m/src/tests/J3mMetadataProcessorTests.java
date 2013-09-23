@@ -2,6 +2,7 @@ package tests;
 
 import java.io.File;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -52,5 +53,26 @@ public class J3mMetadataProcessorTests {
 		}
 		Assert.assertTrue("decoded file timestamp doesnt reflect operation", timestamp < testOut.lastModified());
 
+	}
+	@Test 
+	public void extractAudioTest() throws Exception{
+		File audioJ3M = new File(testConfig.getAudioJ3M());
+		File temp = new File(audioJ3M.getParent(), audioJ3M.getName() + ".temp");
+		FileUtils.copyFile(audioJ3M,temp);
+		long timestamp = System.currentTimeMillis();
+		J3mMetadataProcessor metadataProcessor = new J3mMetadataProcessor(temp,new File(testConfig.getOutputFolder()));
+		config.setDebug(true);
+		File testOut = metadataProcessor.extractAudio();
+		if (!testOut.exists()){
+		    Assert.fail("Decoded file " + testOut.getPath() + " does not exist");
+		}
+		Assert.assertTrue("decoded file timestamp doesnt reflect operation", timestamp < testOut.lastModified());
+		timestamp = System.currentTimeMillis();
+		try {
+			testOut = metadataProcessor.extractAudio();
+			Assert.fail("BLOB replacement failed");
+		}catch (Exception e) {
+			Assert.assertTrue("JSON file erronoously updated althogh ausio BLOB should have been removed", timestamp < testOut.lastModified());
+		}
 	}
 }
