@@ -5,11 +5,16 @@ import gpg.GPGException;
 import gpg.GPGWrapper;
 
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
@@ -17,7 +22,6 @@ import org.apache.commons.io.FileUtils;
 import util.JSONTreeSearcher;
 import util.Util;
 
-import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
 
 public class J3mMetadataProcessor extends FileProcessor{
@@ -34,16 +38,13 @@ public class J3mMetadataProcessor extends FileProcessor{
 			FrameworkProperties.processMessage("Starting JSONafication");
 			toJSON();
 		}
-		File sig = extractSignature();
-		if (sig != null) {
-			FrameworkProperties.processMessage("Found signature file");
-			try {
-				verifySignature(sig);
-			}catch (Exception e) {
-				FrameworkProperties.processError("Failed to verify signature for file " + getSourceFile(), e);
-			}
-
+			
+		try {
+			procesGPGSignature();
+		}catch (Exception e) {
+			FrameworkProperties.processError("Failed to verify signature for file " + getSourceFile(), e);
 		}
+		
 		File j3m = new File (getSourceFile().getParent(),  Util.getBaseFileName(getSourceFile()) + ".json");
 		FileUtils.copyFile(getSourceFile(),j3m);
 		fileTrail.add(getSourceFile());
@@ -115,20 +116,6 @@ public class J3mMetadataProcessor extends FileProcessor{
 		gpgWrapper.decrypt(sourceFile, outputFile);
 	}
 	
-	/**
-	 * returns TRUE when a signature block is present and is verified, FALSE in all other cases
-	 * @param sourceFile
-	 * @return
-	 * @throws IOException 
-	 * @throws GPGException 
-	 */
-	public void verifySignature(File sigFile) throws GPGException, IOException{
-		GPGWrapper gpgWrapper = new GPGWrapper();
-
-		if (!gpgWrapper.verifySignature(getSourceFile(), sigFile)) {
-			throw new GPGException("Could not verify signature " + sigFile.getName() + " for file " + getSourceFile().getName());
-		}	
-	}
 	
 	public File extractAudio() throws Exception {
 		File audioFile = null;
@@ -192,13 +179,15 @@ public class J3mMetadataProcessor extends FileProcessor{
 	 * @return the File containing the signature
 	 * @throws IOException 
 	 */
-	public File extractSignature() throws IOException {
+	public File procesGPGSignature() throws IOException, GPGException, Exception {
 		File sigFile = null;
 		
 		JSONTreeSearcher jsonSearcher = new JSONTreeSearcher(getSourceFile(), FrameworkProperties.getInstance().getSignatureContainer().split("\\."), true);
 		jsonSearcher.performSearch();
 		if (jsonSearcher.getEndElement()!= null) {
 			// ok, we got a signature
+			FrameworkProperties.processMessage("Found signature file");
+			
 			sigFile = new File (getSourceFile().getParent(), getSourceFile().getName() + ".sig");
 			FileWriter fw = new FileWriter(sigFile);
 			fw.write(jsonSearcher.getEndElement().getAsString());
@@ -209,16 +198,49 @@ public class J3mMetadataProcessor extends FileProcessor{
 			jsonSearcher.performSearch();
 			if (jsonSearcher.getEndElement() != null) {
 				File j3mFile = new File (getSourceFile().getParent(), getSourceFile().getName() +  ".json");
-				Gson gson = new Gson(); // Or use new GsonBuilder().create();
-				String json = gson.toJson(jsonSearcher.getEndElement());
-				fw = new FileWriter(j3mFile);
-				fw.write(json);
-				fw.write("\n");//TODO move to preperties as an option
-				fw.close();
+				
+				//OK, because the JSONObject that was used to write the file does particular escapy stuff, and because the bytes
+				// of that output were given to PGP, we can't let Java do any processing or escaping so just treat the file as bytes
+				
+				FileInputStream fis = new FileInputStream(getSourceFile());
+				DataOutputStream os = new DataOutputStream( new FileOutputStream(j3mFile));
+				byte[] buf = new byte[1024];
+				try {
+					int open = 0;
+					int closed = -1;
+					int offSet = new String("{\"" + FrameworkProperties.getInstance().getJ3mContainer() + "\":").getBytes().length;
+					int readNum = fis.read(buf, 0, offSet);
+					buf = new byte["}".getBytes().length];
+		            while ((readNum = fis.read(buf)) != -1 && closed < open) {
+		            	if( closed == -1) {
+		            		//starting round
+		            		closed = 0;	
+		            	}
+		            	if (Arrays.equals(buf,"}".getBytes())){
+		            		closed++;
+		            	}
+		            	if (Arrays.equals(buf,"{".getBytes())){
+		            		open++;
+		            	}
+		                os.write(buf, 0, readNum);
+		            }
+
+		        } catch (IOException ex) {
+		            throw new IOException("Could not write j3m json file",ex);
+		        }
+		        os.close();
+		        fis.close();
+		  
+				GPGWrapper gpgWrapper = new GPGWrapper();
+
+				if (!gpgWrapper.verifySignature(j3mFile, sigFile)) {
+					throw new GPGException("Could not verify signature " + sigFile.getName() + " for file " + j3mFile.getName());
+				}
+
 				setSourceFile(j3mFile);
 			}else {
 				//well, if we can't get the main j3m out, the signature wont verify, for one thing...'
-				//TODO somethibng
+				throw new GPGException("Could not find j3m data after GPG signature was found, for file " + getSourceFile().getName());
 			}
 		}
 		return sigFile;

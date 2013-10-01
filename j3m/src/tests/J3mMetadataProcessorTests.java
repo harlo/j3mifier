@@ -29,18 +29,7 @@ public class J3mMetadataProcessorTests {
 
 	}
 
-	@Test
-	public void extractSignatureTest() throws Exception {
-		File metadata = new File(testConfig.getSignedJ3M());
-		long timestamp = System.currentTimeMillis();
-		J3mMetadataProcessor metadataProcessor = new J3mMetadataProcessor(metadata,new File(testConfig.getOutputFolder()));
-		File sigFile = metadataProcessor.extractSignature();
-		if (!sigFile.exists()){
-		    Assert.fail("Extracted signature file " + sigFile.getPath() + " does not exist");
-		}
-		Assert.assertTrue("signature file timestamp doesnt reflect operation", timestamp < sigFile.lastModified());
-
-	}
+	
 	@Test
 	public void toJSONTest ()throws Exception {
 		File metadata = new File(testConfig.getEncryptedJ3M());

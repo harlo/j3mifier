@@ -19,6 +19,7 @@ import junit.framework.Assert;
 
 import org.apache.commons.codec.binary.Base64OutputStream;
 import org.apache.commons.codec.binary.Hex;
+import org.json.JSONObject;
 import org.junit.Test;
 
 import util.Util;
@@ -130,5 +131,33 @@ public class UtilTests {
 		String hash2 = Hex.encodeHexString(messageDigest);
 		
 		Assert.assertEquals("Hash result does not match", hashResult, testConfig.getImageHash());
+	}
+	
+	@Test
+	public void jsonToStingTest() throws Exception {
+		File jsonFile = new File ("C:/Users/NB/Documents/harlo/nNlmKXiQDBSyTdngEQKORlRVAJ.json");
+		BufferedReader reader = new BufferedReader(new FileReader(jsonFile));
+		StringBuilder jsonString = new StringBuilder();
+		String line = reader.readLine();
+		while (line != null) {
+			jsonString.append(line);
+			line = reader.readLine();
+		}
+		
+		JSONObject j3mJSON = new JSONObject(jsonString.toString());	
+		String jsonResult = j3mJSON.toString();
+		for (int i = 0; i < 100; i++){
+			Assert.assertEquals(" i is " + i,jsonResult, j3mJSON.toString());
+		}
+
+		for (int i = 0; i < 100; i++){
+			j3mJSON = new JSONObject();
+			JSONObject j3mJSON2 = new JSONObject(jsonString.toString());	
+			j3mJSON.put("new", j3mJSON2);
+			jsonResult = "{\"new\":" +j3mJSON2.toString()+"}";
+			for (int j = 0; j < 100; j++){
+				Assert.assertEquals(" i is " + i + " j is " + j,jsonResult, j3mJSON.toString());
+			}
+		}
 	}
 }

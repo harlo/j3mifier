@@ -2,14 +2,12 @@ package util;
 
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -26,13 +24,9 @@ import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.io.IOUtils;
 import org.imgscalr.Scalr;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 
 
 public class Util {
-	
-	private final static int BYTE_READ_SIZE = 8192;
 
 	public static String replaceFileMarkers(String command, String inputFile, String outputFile) {
 		return command.replace("<infile>", inputFile).replace("<outfile>", outputFile);
