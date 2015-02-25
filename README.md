@@ -5,6 +5,11 @@ Overview
 
 j3mifier is a command line utility that extracts and unpacks j3m metadata from the host media file. The host media file is then converted to a set of internet ready formats and dimensions.
 
+Building and running
+
+    run: mvn clean install
+    to skip tests, run mvn clean install -Dmaven.test.skip=true
+
 Use
 j3mifier is called from command line:
 sudo java -cp .:/opt/j3m/framework/:/opt/j3m/jars/*:/opt/j3m/conf/ framework.MediaProcessor <input_file> <output_folder>
